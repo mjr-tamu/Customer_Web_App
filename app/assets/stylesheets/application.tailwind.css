@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------
+   Custom project styles (kept during purge)
+   --------------------------------------------- */
+@layer components {
+
+  /* --- Flash (optional, shown via JS) --- */
+  .flash-popup {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #444;
+    color: #fff;
+    padding: 30px 50px;
+    border-radius: 12px;
+    z-index: 9999;
+    display: none; /* toggle with JS */
+  }
+
+  /* --- Table --- */
+  .styled-table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    min-width: 400px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .styled-table thead tr {
+    background-color: #2c3e50;
+    color: #fff;
+    text-align: left;
+  }
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  .styled-table tbody tr:nth-of-type(even) { background-color: #f3f3f3; }
+  .styled-table tbody tr:hover { background-color: #f1f7ff; }
+
+  /* --- Buttons as links (single base, with modifiers) --- */
+  .btn-link {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 8px 4px 0 0;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #45CC2D;        /* base: neutral */
+    transition: background-color 0.2s;
+  }
+  .btn-link:hover { background-color: #636e72; }
+
+  .btn-link.show {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 8px 4px 0 0;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #D3D3D3;        /* light gray */
+    transition: background-color 0.2s;
+  }
+  .btn-link.show:hover { background-color: #636e72; }
+
+  .btn-link.read {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 8px 4px 0 0;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #FFDBBB;        /* sand */
+    transition: background-color 0.2s;
+  }
+  .btn-link.read:hover { background-color: #636e72; }
+
+  .btn-link.primary {
+    background-color: #3498db;         /* primary: blue */
+  }
+  .btn-link.primary:hover { background-color: #2980b9; }
+
+  .btn-link.delete-button {
+    background-color: #e74c3c;         /* danger: red */
+  }
+  .btn-link.delete-button:hover { background-color: #c0392b; }
+
+  /* --- Forms --- */
+  .styled-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-family: system-ui, sans-serif;
+  }
+  .styled-form label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .styled-form input[type="text"],
+  .styled-form input[type="number"],
+  .styled-form input[type="date"],
+  .styled-form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  .styled-form input:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  .styled-form input[type="submit"] {
+    background-color: #3498db;
+    border: none;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  .styled-form input[type="submit"]:hover { background-color: #2980b9; }
+
+  .form-control {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+}

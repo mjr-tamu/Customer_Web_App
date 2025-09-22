@@ -1,0 +1,17 @@
+<h1>Add a new Book</h1>
+<%= form_with model: @book, html: { class: "styled-form" } do |form| %>
+  <%= form.label :title %>
+  <%= form.text_field :title %>
+
+  <%= form.label :author_name, "Author" %>
+  <%= form.text_field :author_name %>
+
+  <%= form.label :price %>
+  <%= form.text_field :price %>
+
+  <%= form.label :publish_date %>
+  <%= form.date_field :publish_date %>
+  <%= form.submit "Add Book" %>
+<% end %>
+
+<%= link_to('Back to Home', home_path, class: "btn-link primary") %>

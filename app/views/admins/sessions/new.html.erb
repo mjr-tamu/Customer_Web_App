@@ -1,0 +1,11 @@
+<div style="text-align: center; margin-top: 50px;">
+  <h1>Book Collection Manager</h1>
+  <h2>Please log in to access your personal book collection</h2>
+  <p>Manage your books, add new titles, and keep track of your reading list.</p>
+  
+  <div style="margin-top: 30px;">
+    <%= button_to admin_google_oauth2_omniauth_authorize_path, class: "btn btn-danger", method: :post, data: {turbo: "false"}, style: "padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; background-color: #4285f4; color: white; cursor: pointer;" do %>
+      <i class="fab fa-google mobile-text"></i><span class = "mobile-font">&nbsp;Sign in with Google</span>
+    <% end %>
+  </div>
+</div>

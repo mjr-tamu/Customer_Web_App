@@ -1,0 +1,8 @@
+--require spec_helper
+--color
+--format documentation
+--default-path spec
+--pattern **/*_spec.rb
+--exclude-pattern vendor/**/*
+--exclude-pattern node_modules/**/*
+--exclude-pattern tmp/**/*

@@ -1,0 +1,21 @@
+<h1>Confirm Deletion</h1>
+
+<p>Are you sure you want to delete the book:</p>
+<table class="styled-table"> <!-- Starting the table with a simple border-->
+  <thead> <!-- This is the table header section-->
+    <tr> <!-- This defines a table row -->
+      <th><strong>Title</strong></th> <!-- This defines a table header cell-->
+      <th><strong>Author</strong></th>
+    </tr>
+  </thead>
+
+  <tbody> <!-- This defines the main content of the table -->
+      <tr> <!-- This defines a table row -->
+        <td><%= @book.title %></td> <!-- This defines table data cell -->
+        <td><%= @book.author&.author_name || 'No Author' %></td> <!-- This defines table data cell -->
+        <td><%= button_to "Yes, delete", destroy_book_path(@book), method: :delete, class: "btn-link delete-button" %></td>
+        <td><%= link_to "Cancel", home_path, class: "btn-link" %></td>
+      </tr>
+  </tbody>
+</table>
+<%= link_to "Back to Home", home_path, class: "btn-link primary" %>
