@@ -1,0 +1,35 @@
+<h1>Edit Calendar Event</h1>
+
+<%= form_with model: @calendar,
+              url: update_calendar_path(@calendar),
+              method: :patch,
+              local: true,
+              html: { class: "styled-form" } do |form| %>
+
+  <div>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :event_date, "Event Date & Time" %><br>
+    <%= form.datetime_local_field :event_date %>
+  </div>
+
+  <div>
+    <%= form.label :description %><br>
+    <%= form.text_area :description %>
+  </div>
+
+  <div>
+    <%= form.label :location %><br>
+    <%= form.text_field :location %>
+  </div>
+
+  <div>
+      <%= form.submit "Update Event" %>
+    </div>
+  <% end %>
+
+<%= link_to "Cancel", calendars_path, class: "btn-link" %>
+<%= link_to "Back to Home", home_path, class: "btn-link primary" %>

@@ -1,0 +1,290 @@
+<div class="details-container">
+  <div class="details-card">
+    <div class="details-header">
+      <div class="details-icon">
+        📅
+      </div>
+      <h1 class="details-title">Event Details</h1>
+      <p class="details-subtitle">View your calendar event information</p>
+    </div>
+
+    <div class="details-content">
+      <div class="event-info">
+        <div class="info-section">
+          <div class="info-label">
+            <span class="label-icon">📝</span>
+            Event Title
+          </div>
+          <div class="info-value"><%= @calendar.title %></div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">
+            <span class="label-icon">📅</span>
+            Date & Time
+          </div>
+          <div class="info-value">
+            <%= @calendar.event_date.strftime("%A, %B %d, %Y") %>
+            <br>
+            <span class="time-info"><%= @calendar.event_date.strftime("%I:%M %p") %></span>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">
+            <span class="label-icon">📄</span>
+            Description
+          </div>
+          <div class="info-value description-text"><%= @calendar.description %></div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">
+            <span class="label-icon">📍</span>
+            Location
+          </div>
+          <div class="info-value"><%= @calendar.location.present? ? @calendar.location : 'No location specified' %></div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <%= link_to 'Edit Event', edit_calendar_path(@calendar), class: "action-button edit-button" %>
+        <%= link_to 'Delete Event', delete_calendar_path(@calendar), class: "action-button delete-button" %>
+        <%= link_to 'Back to Calendar', home_path, class: "action-button back-button" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffccd5 0%, #ff8fab 25%, #ffffff 50%, #ffccd5 75%, #ff8fab 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.details-container {
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+}
+
+.details-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.details-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #ffccd5;
+  padding-bottom: 30px;
+}
+
+.details-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.details-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #d81b60;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(216, 27, 96, 0.1);
+}
+
+.details-subtitle {
+  font-size: 1.1rem;
+  color: #5f6368;
+  margin: 0;
+  font-weight: 400;
+}
+
+.details-content {
+  margin-top: 30px;
+}
+
+.event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.info-section {
+  background: rgba(255, 204, 213, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255, 143, 171, 0.2);
+  transition: all 0.3s ease;
+}
+
+.info-section:hover {
+  background: rgba(255, 204, 213, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 143, 171, 0.2);
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #d81b60;
+  margin-bottom: 10px;
+}
+
+.label-icon {
+  font-size: 1.2rem;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  color: #3c4043;
+  line-height: 1.5;
+  margin-left: 32px;
+}
+
+.time-info {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.description-text {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-top: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 2px solid #ffccd5;
+}
+
+.action-button {
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 140px;
+  border: 2px solid;
+}
+
+.edit-button {
+  background: linear-gradient(135deg, #ff8fab 0%, #ffccd5 100%);
+  color: white;
+  border-color: #ff8fab;
+}
+
+.edit-button:hover {
+  background: linear-gradient(135deg, #ff6b92 0%, #ff8fab 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.3);
+}
+
+.delete-button {
+  background: transparent;
+  color: #f44336;
+  border-color: #f44336;
+}
+
+.delete-button:hover {
+  background: #f44336;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.back-button {
+  background: transparent;
+  color: #5f6368;
+  border-color: #dadce0;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  border-color: #5f6368;
+  color: #3c4043;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .details-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .details-title {
+    font-size: 2rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-button {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .info-value {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .details-container {
+    padding: 10px;
+  }
+  
+  .details-card {
+    padding: 25px 15px;
+  }
+  
+  .details-title {
+    font-size: 1.8rem;
+  }
+  
+  .details-icon {
+    font-size: 3rem;
+  }
+}
+</style>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_150202) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_190214) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,22 +30,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_150202) do
     t.index ["uid"], name: "index_admins_on_uid", unique: true
   end
 
-  create_table "authors", force: :cascade do |t|
-    t.string "author_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "books", force: :cascade do |t|
+  create_table "calendars", force: :cascade do |t|
     t.string "title"
+    t.datetime "event_date"
+    t.text "description"
+    t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "author"
-    t.float "price"
-    t.datetime "publish_date"
-    t.bigint "author_id"
-    t.index ["author_id"], name: "index_books_on_author_id"
   end
-
-  add_foreign_key "books", "authors"
 end

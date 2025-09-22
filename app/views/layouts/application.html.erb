@@ -7,19 +7,62 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <style>
-      .flash__alert { color: red; }
-      .flash__notice { color: blue; }
-      .flash__success { color: green; }
+      .flash {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 90%;
+        text-align: center;
+        transition: all 0.3s ease;
+        opacity: 1;
+      }
+      .flash__alert { 
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+      }
+      .flash__notice { 
+        background: #e3f2fd;
+        color: #1565c0;
+        border: 1px solid #bbdefb;
+      }
+      .flash__success { 
+        background: #e8f5e8;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
     </style>
   </head>
 
   <body>
     <% if flash.any? %>
       <% flash.each do |key, value| -%>
-        <section class="flash flash__<%= key %>"><%= value.html_safe %></section>
+        <section class="flash flash__<%= key %>" id="flash-<%= key %>"><%= value.html_safe %></section>
       <% end -%>
     <% end %>
 
     <%= yield %>
+
+    <script>
+      // Auto-hide flash messages after 5 seconds
+      document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash');
+        flashMessages.forEach(function(flash) {
+          setTimeout(function() {
+            flash.style.opacity = '0';
+            flash.style.transform = 'translateX(-50%) translateY(-20px)';
+            setTimeout(function() {
+              flash.remove();
+            }, 300);
+          }, 5000);
+        });
+      });
+    </script>
   </body>
 </html>

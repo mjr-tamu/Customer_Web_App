@@ -5,134 +5,77 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 if Rails.env.development?
-  # DEVELOPMENT ENVIRONMENT - 5 Fantasy/Sci-Fi Books
-  puts 'Seeding development environment with fantasy/sci-fi books...'
+  # DEVELOPMENT ENVIRONMENT - Sample Calendar Events
+  puts 'Seeding development environment with sample calendar events...'
 
-  # Create authors for development
-  author1 = Author.find_or_create_by!(author_name: 'J.K. Rowling')
-  author2 = Author.find_or_create_by!(author_name: 'George Orwell')
-  author3 = Author.find_or_create_by!(author_name: 'Isaac Asimov')
-  author4 = Author.find_or_create_by!(author_name: 'J.R.R. Tolkien')
-  author5 = Author.find_or_create_by!(author_name: 'Frank Herbert')
-
-  # Create books for development
-  Book.find_or_create_by!(title: "Harry Potter and the Philosopher's Stone") do |book|
-    book.author_id = author1.id
-    book.price = 12.99
-    book.publish_date = Date.new(1997, 6, 26)
+  # Create calendar events for development
+  Calendar.find_or_create_by!(title: 'Team Meeting') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 23, 14, 0, 0)
+    calendar.description = 'Weekly team standup meeting to discuss project progress and upcoming deadlines'
+    calendar.location = 'Conference Room A'
   end
 
-  Book.find_or_create_by!(title: '1984') do |book|
-    book.author_id = author2.id
-    book.price = 10.99
-    book.publish_date = Date.new(1949, 6, 8)
+  Calendar.find_or_create_by!(title: 'Project Deadline') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 25, 17, 0, 0)
+    calendar.description = 'Final submission deadline for the customer web app project'
+    calendar.location = 'Online'
   end
 
-  Book.find_or_create_by!(title: 'Foundation') do |book|
-    book.author_id = author3.id
-    book.price = 13.99
-    book.publish_date = Date.new(1951, 5, 1)
+  Calendar.find_or_create_by!(title: 'Code Review') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 26, 10, 30, 0)
+    calendar.description = 'Review calendar functionality implementation and provide feedback'
+    calendar.location = 'Office - Room 301'
   end
 
-  Book.find_or_create_by!(title: 'The Lord of the Rings') do |book|
-    book.author_id = author4.id
-    book.price = 15.99
-    book.publish_date = Date.new(1954, 7, 29)
+  Calendar.find_or_create_by!(title: 'Client Presentation') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 27, 15, 0, 0)
+    calendar.description = 'Present the new calendar application to stakeholders'
+    calendar.location = 'Main Conference Room'
   end
 
-  Book.find_or_create_by!(title: 'Dune') do |book|
-    book.author_id = author5.id
-    book.price = 14.99
-    book.publish_date = Date.new(1965, 8, 1)
+  Calendar.find_or_create_by!(title: 'Holiday Break') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 30, 9, 0, 0)
+    calendar.description = 'Company holiday break - office closed'
+    calendar.location = 'Office'
   end
 
-  puts 'Development data created successfully! (5 fantasy/sci-fi books)'
+  puts 'Development data created successfully! (5 sample calendar events)'
 
 elsif Rails.env.test?
-  # TEST ENVIRONMENT - 5 Classic Literature Books
-  puts 'Seeding test environment with classic literature books...'
+  # TEST ENVIRONMENT - Test Calendar Events
+  puts 'Seeding test environment with test calendar events...'
 
-  # Create authors for test
-  author1 = Author.find_or_create_by!(author_name: 'Harper Lee')
-  author2 = Author.find_or_create_by!(author_name: 'F. Scott Fitzgerald')
-  author3 = Author.find_or_create_by!(author_name: 'Ernest Hemingway')
-  author4 = Author.find_or_create_by!(author_name: 'Jane Austen')
-  author5 = Author.find_or_create_by!(author_name: 'Mark Twain')
-
-  # Create books for test
-  Book.find_or_create_by!(title: 'To Kill a Mockingbird') do |book|
-    book.author_id = author1.id
-    book.price = 11.99
-    book.publish_date = Date.new(1960, 7, 11)
+  # Create calendar events for test
+  Calendar.find_or_create_by!(title: 'Test Meeting') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 20, 9, 0, 0)
+    calendar.description = 'Test event for automated testing'
+    calendar.location = 'Test Room'
   end
 
-  Book.find_or_create_by!(title: 'The Great Gatsby') do |book|
-    book.author_id = author2.id
-    book.price = 9.99
-    book.publish_date = Date.new(1925, 4, 10)
+  Calendar.find_or_create_by!(title: 'Unit Tests') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 21, 14, 0, 0)
+    calendar.description = 'Run unit tests for calendar model'
+    calendar.location = 'Development Environment'
   end
 
-  Book.find_or_create_by!(title: 'The Old Man and the Sea') do |book|
-    book.author_id = author3.id
-    book.price = 8.99
-    book.publish_date = Date.new(1952, 9, 1)
-  end
-
-  Book.find_or_create_by!(title: 'Pride and Prejudice') do |book|
-    book.author_id = author4.id
-    book.price = 7.99
-    book.publish_date = Date.new(1813, 1, 28)
-  end
-
-  Book.find_or_create_by!(title: 'The Adventures of Huckleberry Finn') do |book|
-    book.author_id = author5.id
-    book.price = 10.99
-    book.publish_date = Date.new(1884, 12, 10)
-  end
-
-  puts 'Test data created successfully! (5 classic literature books)'
+  puts 'Test data created successfully! (2 test calendar events)'
 
 else
-  # PRODUCTION ENVIRONMENT - 5 Modern Bestsellers
-  puts 'Seeding production environment with modern bestsellers...'
+  # PRODUCTION ENVIRONMENT - Production Calendar Events
+  puts 'Seeding production environment with production calendar events...'
 
-  # Create authors for production
-  author1 = Author.find_or_create_by!(author_name: 'Dan Brown')
-  author2 = Author.find_or_create_by!(author_name: 'Gillian Flynn')
-  author3 = Author.find_or_create_by!(author_name: 'Paulo Coelho')
-  author4 = Author.find_or_create_by!(author_name: 'Khaled Hosseini')
-  author5 = Author.find_or_create_by!(author_name: 'Celeste Ng')
-
-  # Create books for production
-  Book.find_or_create_by!(title: 'The Da Vinci Code') do |book|
-    book.author_id = author1.id
-    book.price = 16.99
-    book.publish_date = Date.new(2003, 3, 18)
+  # Create calendar events for production
+  Calendar.find_or_create_by!(title: 'Production Deployment') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 28, 20, 0, 0)
+    calendar.description = 'Deploy calendar application to production environment'
+    calendar.location = 'Production Server'
   end
 
-  Book.find_or_create_by!(title: 'Gone Girl') do |book|
-    book.author_id = author2.id
-    book.price = 15.99
-    book.publish_date = Date.new(2012, 6, 5)
+  Calendar.find_or_create_by!(title: 'Monitoring Setup') do |calendar|
+    calendar.event_date = DateTime.new(2024, 12, 29, 11, 0, 0)
+    calendar.description = 'Configure monitoring and logging for production calendar app'
+    calendar.location = 'Server Room'
   end
 
-  Book.find_or_create_by!(title: 'The Alchemist') do |book|
-    book.author_id = author3.id
-    book.price = 12.99
-    book.publish_date = Date.new(1988, 1, 1)
-  end
-
-  Book.find_or_create_by!(title: 'The Kite Runner') do |book|
-    book.author_id = author4.id
-    book.price = 14.99
-    book.publish_date = Date.new(2003, 5, 29)
-  end
-
-  Book.find_or_create_by!(title: 'Little Fires Everywhere') do |book|
-    book.author_id = author5.id
-    book.price = 13.99
-    book.publish_date = Date.new(2017, 9, 12)
-  end
-
-  puts 'Production data created successfully! (5 modern bestsellers)'
+  puts 'Production data created successfully! (2 production calendar events)'
 end

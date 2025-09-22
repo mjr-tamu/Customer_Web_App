@@ -1,0 +1,926 @@
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-icon">
+        ✨
+      </div>
+      <h1 class="form-title">Create New Event</h1>
+      <p class="form-subtitle">Add a new event to your WIPS Event Calendar</p>
+    </div>
+
+    <div class="form-content">
+      <%= form_with model: @calendar, html: { class: "event-form" } do |form| %>
+        <div class="form-group">
+          <%= form.label :title, class: "form-label" do %>
+            <span class="label-icon">📝</span>
+            Event Title
+          <% end %>
+          <%= form.text_field :title, class: "form-input", placeholder: "Enter event title..." %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :event_date, "Event Date & Time", class: "form-label" do %>
+            <span class="label-icon">📅</span>
+            Date & Time
+          <% end %>
+          <div class="datetime-picker">
+            <div class="date-picker-container">
+              <div class="picker-button-container">
+                <button type="button" class="picker-button date-picker-btn" onclick="toggleCalendar()">
+                  <span class="picker-icon">📅</span>
+                </button>
+                <label class="picker-label">Date</label>
+              </div>
+              <input type="text" id="date-display" class="date-display" placeholder="Select Date" readonly>
+              <div class="calendar-dropdown" id="calendar-dropdown">
+                <div class="calendar-header">
+                  <button type="button" class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                  <span class="calendar-month-year" id="calendar-month-year"></span>
+                  <button type="button" class="calendar-nav" onclick="changeMonth(1)">›</button>
+                </div>
+                <div class="calendar-grid">
+                  <div class="calendar-day-header">S</div>
+                  <div class="calendar-day-header">M</div>
+                  <div class="calendar-day-header">T</div>
+                  <div class="calendar-day-header">W</div>
+                  <div class="calendar-day-header">T</div>
+                  <div class="calendar-day-header">F</div>
+                  <div class="calendar-day-header">S</div>
+                </div>
+                <div class="calendar-days" id="calendar-days"></div>
+              </div>
+            </div>
+            
+            <div class="time-picker-container">
+              <div class="picker-button-container">
+                <button type="button" class="picker-button time-picker-btn" onclick="toggleTimePicker()">
+                  <span class="picker-icon">🕐</span>
+                </button>
+                <label class="picker-label">Time</label>
+              </div>
+              <input type="text" id="time-display" class="time-display" placeholder="Select Time" readonly>
+              <div class="time-picker-dropdown" id="time-picker-dropdown">
+                <div class="time-picker-content">
+                  <div class="time-scroll">
+                    <div class="time-scroll-container">
+                      <div class="time-option" data-hour="1">1</div>
+                      <div class="time-option" data-hour="2">2</div>
+                      <div class="time-option" data-hour="3">3</div>
+                      <div class="time-option" data-hour="4">4</div>
+                      <div class="time-option" data-hour="5">5</div>
+                      <div class="time-option" data-hour="6">6</div>
+                      <div class="time-option" data-hour="7">7</div>
+                      <div class="time-option" data-hour="8">8</div>
+                      <div class="time-option" data-hour="9">9</div>
+                      <div class="time-option" data-hour="10">10</div>
+                      <div class="time-option" data-hour="11">11</div>
+                      <div class="time-option" data-hour="12">12</div>
+                    </div>
+                  </div>
+                  <div class="time-separator">:</div>
+                  <div class="time-scroll">
+                    <div class="time-scroll-container">
+                      <div class="time-option" data-minute="00">00</div>
+                      <div class="time-option" data-minute="15">15</div>
+                      <div class="time-option" data-minute="30">30</div>
+                      <div class="time-option" data-minute="45">45</div>
+                    </div>
+                  </div>
+                  <div class="am-pm-container">
+                    <button type="button" class="am-pm-btn active" data-period="AM">AM</button>
+                    <button type="button" class="am-pm-btn" data-period="PM">PM</button>
+                  </div>
+                </div>
+                <div class="time-picker-actions">
+                  <button type="button" class="time-ok-btn" onclick="confirmTime()">OK</button>
+                  <button type="button" class="time-cancel-btn" onclick="cancelTime()">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <%= form.hidden_field :event_date, id: "hidden-datetime" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :description, class: "form-label" do %>
+            <span class="label-icon">📄</span>
+            Description
+          <% end %>
+          <%= form.text_area :description, class: "form-textarea", placeholder: "Describe your event...", rows: 4 %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :location, class: "form-label" do %>
+            <span class="label-icon">📍</span>
+            Location
+          <% end %>
+          <%= form.text_field :location, class: "form-input", placeholder: "Where will this event take place?" %>
+        </div>
+
+        <div class="form-actions">
+          <%= form.submit "Create Event", class: "submit-button" %>
+          <%= link_to 'Cancel', home_path, class: "cancel-button" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffccd5 0%, #ff8fab 25%, #ffffff 50%, #ffccd5 75%, #ff8fab 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.form-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.form-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.form-title {
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: #d81b60;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(216, 27, 96, 0.1);
+}
+
+.form-subtitle {
+  font-size: 1rem;
+  color: #5f6368;
+  margin: 0;
+  font-weight: 400;
+}
+
+.form-content {
+  margin-top: 30px;
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #3c4043;
+  margin-bottom: 5px;
+}
+
+.label-icon {
+  font-size: 1.2rem;
+}
+
+.form-input, .form-textarea {
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  color: #3c4043;
+}
+
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #ff8fab;
+  box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.1);
+  background: white;
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+  color: #9aa0a6;
+  font-style: italic;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #ff8fab 0%, #ffccd5 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
+  min-width: 150px;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 143, 171, 0.4);
+  background: linear-gradient(135deg, #ff6b92 0%, #ff8fab 100%);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.cancel-button {
+  background: transparent;
+  color: #5f6368;
+  border: 2px solid #dadce0;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  text-align: center;
+  display: inline-block;
+}
+
+.cancel-button:hover {
+  background: #f8f9fa;
+  border-color: #5f6368;
+  color: #3c4043;
+  transform: translateY(-1px);
+}
+
+/* Form validation styles */
+.form-input.error, .form-textarea.error {
+  border-color: #f44336;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.form-input.success, .form-textarea.success {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Loading state */
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Date and Time Picker Styles */
+.datetime-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: stretch;
+}
+
+.date-picker-container {
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+}
+
+.time-picker-container {
+  position: relative;
+  width: 100%;
+  z-index: 100;
+}
+
+.picker-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.picker-button {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #e0e0e0;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.picker-button:hover {
+  border-color: #ff8fab;
+  background: #ffccd5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
+}
+
+.picker-icon {
+  font-size: 1.8rem;
+  transition: transform 0.3s ease;
+}
+
+.picker-button:hover .picker-icon {
+  transform: scale(1.1);
+}
+
+.picker-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5f6368;
+  text-align: center;
+}
+
+.date-display, .time-display {
+  width: 200px;
+  max-width: 200px;
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.8);
+  color: #3c4043;
+  cursor: default;
+  transition: none;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Calendar Dropdown */
+.calendar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  display: none;
+  margin-top: 5px;
+}
+
+.time-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  display: none;
+  margin-top: 5px;
+}
+
+.calendar-dropdown {
+  width: 300px;
+  padding: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-nav {
+  background: #ffccd5;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #d81b60;
+  transition: all 0.3s ease;
+}
+
+.calendar-nav:hover {
+  background: #ff8fab;
+  color: white;
+}
+
+.calendar-month-year {
+  font-weight: 500;
+  color: #3c4043;
+  font-size: 1.1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 500;
+  color: #5f6368;
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  color: #3c4043;
+}
+
+.calendar-day:hover {
+  background: #ffccd5;
+  color: #d81b60;
+}
+
+.calendar-day.selected {
+  background: #ff8fab;
+  color: white;
+}
+
+.calendar-day.other-month {
+  color: #9aa0a6;
+}
+
+.calendar-day.today {
+  background: #fff3e0;
+  color: #d81b60;
+  font-weight: 500;
+}
+
+/* Time Picker Dropdown */
+.time-picker-dropdown {
+  width: 280px;
+  padding: 20px;
+}
+
+.time-picker-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.time-scroll {
+  height: 120px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.time-scroll-container {
+  padding: 5px;
+}
+
+.time-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  color: #3c4043;
+}
+
+.time-option:hover {
+  background: #ffccd5;
+  color: #d81b60;
+}
+
+.time-option.selected {
+  background: #ff8fab;
+  color: white;
+}
+
+.time-separator {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #5f6368;
+}
+
+.am-pm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.am-pm-btn {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #5f6368;
+  transition: all 0.3s ease;
+}
+
+.am-pm-btn:hover {
+  border-color: #ff8fab;
+  color: #d81b60;
+}
+
+.am-pm-btn.active {
+  background: #ff8fab;
+  border-color: #ff8fab;
+  color: white;
+}
+
+.time-picker-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.time-ok-btn, .time-cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.time-ok-btn {
+  background: #ff8fab;
+  color: white;
+}
+
+.time-ok-btn:hover {
+  background: #ff6b92;
+}
+
+.time-cancel-btn {
+  background: #f8f9fa;
+  color: #5f6368;
+  border: 1px solid #e0e0e0;
+}
+
+.time-cancel-btn:hover {
+  background: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .form-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .form-title {
+    font-size: 1.8rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .submit-button, .cancel-button {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .form-input, .form-textarea {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 10px;
+  }
+  
+  .form-card {
+    padding: 25px 15px;
+  }
+  
+  .form-title {
+    font-size: 1.6rem;
+  }
+  
+  .form-icon {
+    font-size: 2.5rem;
+  }
+}
+
+/* Mobile responsiveness for datetime picker */
+@media (max-width: 768px) {
+  .datetime-picker {
+    gap: 20px;
+  }
+  
+  .picker-button {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .picker-icon {
+    font-size: 1.5rem;
+  }
+  
+  .date-display, .time-display {
+    width: 180px;
+    max-width: 180px;
+  }
+  
+  .calendar-dropdown {
+    width: calc(100vw - 40px);
+    max-width: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .time-picker-dropdown {
+    width: calc(100vw - 40px);
+    max-width: 280px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+</style>
+
+<script>
+// Date Picker Variables
+let currentDate = new Date();
+let selectedDate = null;
+let selectedTime = { hour: 12, minute: 0, period: 'PM' };
+
+// Initialize the date picker
+function initializeDatePicker() {
+  generateCalendar();
+}
+
+// Calendar Functions
+function toggleCalendar() {
+  const dropdown = document.getElementById('calendar-dropdown');
+  const timeDropdown = document.getElementById('time-picker-dropdown');
+  const timeContainer = document.querySelector('.time-picker-container');
+  
+  // Close time picker if open
+  if (timeDropdown.style.display === 'block') {
+    timeDropdown.style.display = 'none';
+  }
+  
+  // Toggle calendar
+  if (dropdown.style.display === 'block') {
+    dropdown.style.display = 'none';
+    timeContainer.style.zIndex = '100';
+  } else {
+    dropdown.style.display = 'block';
+    timeContainer.style.zIndex = '50';
+  }
+}
+
+function changeMonth(direction) {
+  currentDate.setMonth(currentDate.getMonth() + direction);
+  generateCalendar();
+}
+
+function generateCalendar() {
+  const monthYear = document.getElementById('calendar-month-year');
+  const daysContainer = document.getElementById('calendar-days');
+  
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  
+  monthYear.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+  
+  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  const startDate = new Date(firstDay);
+  startDate.setDate(startDate.getDate() - firstDay.getDay());
+  
+  daysContainer.innerHTML = '';
+  
+  // Generate 42 days (6 weeks)
+  for (let i = 0; i < 42; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    
+    const dayElement = document.createElement('div');
+    dayElement.className = 'calendar-day';
+    dayElement.textContent = date.getDate();
+    
+    // Add classes for different states
+    if (date.getMonth() !== currentDate.getMonth()) {
+      dayElement.classList.add('other-month');
+    }
+    
+    if (isToday(date)) {
+      dayElement.classList.add('today');
+    }
+    
+    if (selectedDate && isSameDate(date, selectedDate)) {
+      dayElement.classList.add('selected');
+    }
+    
+    dayElement.onclick = () => selectDate(date);
+    daysContainer.appendChild(dayElement);
+  }
+}
+
+function selectDate(date) {
+  selectedDate = new Date(date);
+  document.getElementById('date-display').value = formatDate(selectedDate);
+  document.getElementById('calendar-dropdown').style.display = 'none';
+  updateHiddenField();
+}
+
+function formatDate(date) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+}
+
+function isToday(date) {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+}
+
+function isSameDate(date1, date2) {
+  return date1.toDateString() === date2.toDateString();
+}
+
+// Time Picker Functions
+function toggleTimePicker() {
+  const dropdown = document.getElementById('time-picker-dropdown');
+  const calendarDropdown = document.getElementById('calendar-dropdown');
+  const dateContainer = document.querySelector('.date-picker-container');
+  
+  // Close calendar if open
+  if (calendarDropdown.style.display === 'block') {
+    calendarDropdown.style.display = 'none';
+    dateContainer.style.zIndex = '1000';
+  }
+  
+  // Toggle time picker
+  if (dropdown.style.display === 'block') {
+    dropdown.style.display = 'none';
+  } else {
+    dropdown.style.display = 'block';
+  }
+}
+
+function confirmTime() {
+  const hour = document.querySelector('.time-option[data-hour].selected')?.dataset.hour || '12';
+  const minute = document.querySelector('.time-option[data-minute].selected')?.dataset.minute || '00';
+  const period = document.querySelector('.am-pm-btn.active')?.dataset.period || 'PM';
+  
+  selectedTime = { hour: parseInt(hour), minute: parseInt(minute), period: period };
+  
+  document.getElementById('time-display').value = formatTime(selectedTime);
+  document.getElementById('time-picker-dropdown').style.display = 'none';
+  updateHiddenField();
+}
+
+function cancelTime() {
+  document.getElementById('time-picker-dropdown').style.display = 'none';
+}
+
+function formatTime(time) {
+  return `${time.hour}:${time.minute.toString().padStart(2, '0')} ${time.period}`;
+}
+
+// Update hidden field for form submission
+function updateHiddenField() {
+  if (selectedDate && selectedTime) {
+    const datetime = new Date(selectedDate);
+    datetime.setHours(selectedTime.period === 'AM' ? selectedTime.hour % 12 : (selectedTime.hour % 12) + 12);
+    datetime.setMinutes(selectedTime.minute);
+    
+    // Format for Rails datetime-local input
+    const year = datetime.getFullYear();
+    const month = (datetime.getMonth() + 1).toString().padStart(2, '0');
+    const day = datetime.getDate().toString().padStart(2, '0');
+    const hours = datetime.getHours().toString().padStart(2, '0');
+    const minutes = datetime.getMinutes().toString().padStart(2, '0');
+    
+    document.getElementById('hidden-datetime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+}
+
+// Event listeners for time selection
+document.addEventListener('DOMContentLoaded', function() {
+  initializeDatePicker();
+  
+  // Time option selection
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('time-option')) {
+      // Remove previous selection in the same category
+      const parent = e.target.parentElement;
+      parent.querySelectorAll('.time-option.selected').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      // Add selection to clicked element
+      e.target.classList.add('selected');
+    }
+  });
+  
+  // AM/PM selection
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('am-pm-btn')) {
+      document.querySelectorAll('.am-pm-btn').forEach(el => {
+        el.classList.remove('active');
+      });
+      e.target.classList.add('active');
+    }
+  });
+  
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function(e) {
+    const calendarDropdown = document.getElementById('calendar-dropdown');
+    const timeDropdown = document.getElementById('time-picker-dropdown');
+    
+    if (!e.target.closest('.date-picker-container')) {
+      calendarDropdown.style.display = 'none';
+    }
+    if (!e.target.closest('.time-picker-container')) {
+      timeDropdown.style.display = 'none';
+    }
+  });
+  
+  // Make sure functions are globally available
+  window.toggleCalendar = toggleCalendar;
+  window.toggleTimePicker = toggleTimePicker;
+  window.changeMonth = changeMonth;
+  window.confirmTime = confirmTime;
+  window.cancelTime = cancelTime;
+});
+</script>

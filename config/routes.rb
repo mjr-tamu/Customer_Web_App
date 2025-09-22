@@ -14,16 +14,16 @@ Rails.application.routes.draw do
   end
 
   # your custom collection page remains
-  get '/books/home', to: 'books#home', as: :home
+  get '/calendars/home(/:date)', to: 'calendars#home', as: :home
 
   # use resources for the standard parts whose helper names you already use
-  resources :books, only: %i[new create edit]
+  resources :calendars, only: %i[new create edit]
 
   # keep your custom helper names for the others
-  get    '/books/:id',             to: 'books#show',    as: :show_book
-  patch  '/books/:id',             to: 'books#update',  as: :update_book
-  delete '/books/:id',             to: 'books#destroy', as: :destroy_book
+  get    '/calendars/:id',             to: 'calendars#show',    as: :show_calendar
+  patch  '/calendars/:id',             to: 'calendars#update',  as: :update_calendar
+  delete '/calendars/:id',             to: 'calendars#destroy', as: :destroy_calendar
 
   # your confirm page
-  get '/books/:id/delete_book', to: 'books#delete', as: :delete_book
+  get '/calendars/:id/delete_calendar', to: 'calendars#delete', as: :delete_calendar
 end
