@@ -1,4 +1,12 @@
 <div class="home-container">
+  <!-- DEBUG INFO -->
+  <div style="background: yellow; padding: 10px; margin: 10px; font-size: 12px;">
+    <p>DEBUG: admin_signed_in? = <%= admin_signed_in? %></p>
+    <p>DEBUG: user_signed_in? = <%= user_signed_in? %></p>
+    <p>DEBUG: session[:user_info] = <%= session[:user_info].inspect %></p>
+    <p>DEBUG: current_user = <%= current_user.inspect %></p>
+  </div>
+  
   <div class="calendar-header">
     <div class="header-content">
       <div class="header-left">
