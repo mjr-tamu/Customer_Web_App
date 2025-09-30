@@ -1,11 +1,5 @@
 class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  def passthru
-    # This action is called by Devise to initiate OAuth flow
-    # It should redirect to the OAuth provider
-    redirect_to "/admins/auth/google_oauth2"
-  end
-
   def google_oauth2
     admin = Admin.from_google(**from_google_params)
 
