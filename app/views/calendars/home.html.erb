@@ -5,12 +5,45 @@
     <div class="header-content">
       <div class="header-left">
         <h1>WIPS Event Calendar</h1>
-        <p>Welcome back, <%= current_admin.email %></p>
+        <% if admin_signed_in? %>
+          <p>Welcome back, <%= current_admin.email %></p>
+        <% else %>
+          <p>Public Event Calendar</p>
+        <% end %>
       </div>
       <div class="header-right">
-        <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
+        <% if admin_signed_in? %>
+          <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
+        <% else %>
+          <%= link_to "Sign In", new_admin_session_path, class: "sign-in-btn" %>
+        <% end %>
       </div>
     </div>
+  </div>
+
+  <!-- Category Filter Section -->
+  <div class="category-filter">
+    <div class="filter-buttons">
+      <%= link_to "All", home_path(date: params[:date]), 
+          class: "filter-btn #{'active' if @selected_categories.empty?}" %>
+      <% @available_categories.each do |category| %>
+        <% 
+          # Toggle category in selection
+          if @selected_categories.include?(category)
+            new_categories = @selected_categories - [category]
+          else
+            new_categories = @selected_categories + [category]
+          end
+        %>
+        <%= link_to category, home_path(categories: new_categories, date: params[:date]), 
+            class: "filter-btn #{'active' if @selected_categories.include?(category)}" %>
+      <% end %>
+    </div>
+    <% if @selected_categories.any? %>
+      <div class="active-filters">
+        <small>Active filters: <%= @selected_categories.join(', ') %></small>
+      </div>
+    <% end %>
   </div>
 
   <div class="calendar-container">
@@ -22,7 +55,9 @@
     </div>
     <div class="nav-right">
       <%= link_to "Today", home_path, class: "today-btn" %>
-      <%= link_to "Create", new_calendar_path, class: "create-btn" %>
+      <% if admin_signed_in? %>
+        <%= link_to "Create", new_calendar_path, class: "create-btn" %>
+      <% end %>
     </div>
   </div>
 
@@ -44,8 +79,9 @@
             <div class="day-number"><%= day[:date].day %></div>
             <div class="events">
               <% day[:events].each do |event| %>
-                <div class="event-item" title="<%= event.title %> - <%= event.event_date.strftime('%I:%M %p') %>">
+                <div class="event-item" title="<%= event.title %> - <%= event.event_date.strftime('%I:%M %p') %> - <%= event.category %>">
                   <%= link_to truncate(event.title, length: 15), show_calendar_path(event), class: "event-link" %>
+                  <div class="event-category"><%= event.category %></div>
                 </div>
               <% end %>
             </div>
@@ -141,6 +177,78 @@ body {
   color: #d81b60;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+}
+
+.sign-in-btn {
+  color: #5f6368;
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 2px solid #dadce0;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.sign-in-btn:hover {
+  background: #ffccd5;
+  border-color: #ff8fab;
+  color: #d81b60;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+}
+
+.category-filter {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 15px 25px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  color: #5f6368;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  border-color: #ff8fab;
+  background: #ffccd5;
+  color: #3c4043;
+  transform: translateY(-1px);
+}
+
+.filter-btn.active {
+  background: #ff8fab;
+  border-color: #ff8fab;
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
+}
+
+.active-filters {
+  text-align: center;
+  margin-top: 10px;
+  color: #5f6368;
+  font-size: 0.8rem;
 }
 
 .calendar-container {
@@ -338,6 +446,13 @@ body {
 .event-link:hover {
   color: #ad1457;
   text-decoration: underline;
+}
+
+.event-category {
+  font-size: 10px;
+  color: #666;
+  font-weight: 500;
+  margin-top: 1px;
 }
 
 @media (max-width: 768px) {

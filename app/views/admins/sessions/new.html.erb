@@ -5,7 +5,7 @@
         📅
       </div>
       <h1 class="app-title">WIPS Event Calendar</h1>
-      <p class="app-subtitle">Your Personal Event Management System</p>
+      <p class="app-subtitle">View and manage organization events</p>
     </div>
     
     <div class="features-section">
@@ -14,29 +14,29 @@
         <div class="feature-item">
           <div class="feature-icon">📝</div>
           <h3>Create Events</h3>
-          <p>Add and manage your personal events with ease</p>
+          <p>Add and manage organization events (Admin)</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon">👁️</div>
           <h3>View Calendar</h3>
-          <p>See your events in a beautiful monthly view</p>
+          <p>See all events in a beautiful monthly view</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon">✏️</div>
           <h3>Edit & Update</h3>
-          <p>Modify event details whenever you need</p>
+          <p>Modify event details (Admin access required)</p>
         </div>
         <div class="feature-item">
           <div class="feature-icon">🗑️</div>
           <h3>Delete Events</h3>
-          <p>Remove events you no longer need</p>
+          <p>Remove events you no longer need (Admin)</p>
         </div>
       </div>
     </div>
     
     <div class="signin-section">
       <h2>Get Started</h2>
-      <p>Sign in with your Google account to access your personal calendar</p>
+      <p>Sign in with your Google account to access admin features</p>
       
       <div class="signin-button-container">
         <%= button_to admin_google_oauth2_omniauth_authorize_path, class: "signin-button", method: :post, data: {turbo: "false"} do %>
