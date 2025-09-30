@@ -1,5 +1,10 @@
 class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
+  def passthru
+    # Let Devise handle the OAuth initiation
+    super
+  end
+
   def google_oauth2
     admin = Admin.from_google(**from_google_params)
 
