@@ -1,8 +1,8 @@
 class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def passthru
-    # Let Devise handle the OAuth initiation
-    super
+    # This should initiate the OAuth flow with Google
+    request.env['omniauth.strategy'].request_phase
   end
 
   def google_oauth2
