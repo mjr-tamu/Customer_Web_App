@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   # Helper method to check if a regular user is signed in
   def user_signed_in?
-    session[:user_info]&.dig(:signed_in) == true
+    session[:user_info]&.dig("signed_in") == true
   end
   helper_method :user_signed_in?
 
