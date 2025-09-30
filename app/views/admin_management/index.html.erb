@@ -44,14 +44,9 @@
               </div>
               <div class="admin-actions">
                 <% unless admin == current_admin %>
-                  <%= link_to remove_admin_path(admin), 
-                      method: :delete, 
-                      class: "remove-button",
-                      data: { 
-                        confirm: "Are you sure you want to remove #{admin.email} as an admin?",
-                        turbo_method: :delete
-                      } do %>
-                    🗑️ Remove
+                  <%= form_with url: remove_admin_path(admin), method: :delete, local: true, class: "remove-form" do |form| %>
+                    <%= form.submit "🗑️ Remove", class: "remove-button", 
+                        data: { confirm: "Are you sure you want to remove #{admin.email} as an admin?" } %>
                   <% end %>
                 <% end %>
               </div>
@@ -303,6 +298,12 @@ body {
   gap: 10px;
 }
 
+.remove-form {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
 .remove-button {
   background: #ffebee;
   color: #c62828;
@@ -314,6 +315,7 @@ body {
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
+  margin: 0;
 }
 
 .remove-button:hover {
