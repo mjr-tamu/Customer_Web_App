@@ -17,6 +17,19 @@
   </div>
 
   <div>
+    <%= form.label :category %><br>
+    <%= form.select :category, 
+        options_for_select([
+          ['Select a category...', ''],
+          ['Service', 'Service'],
+          ['Bush School', 'Bush School'],
+          ['Social', 'Social']
+        ], @calendar.category), 
+        {}, 
+        { class: "form-select" } %>
+  </div>
+
+  <div>
     <%= form.label :description %><br>
     <%= form.text_area :description %>
   </div>

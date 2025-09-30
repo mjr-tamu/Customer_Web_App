@@ -3,7 +3,7 @@
 class Admins::SessionsController < Devise::SessionsController
   # Where to go after logging out
   def after_sign_out_path_for(_resource_or_scope)
-    new_admin_session_path
+    home_path
   end
 
   # Where to go after logging in

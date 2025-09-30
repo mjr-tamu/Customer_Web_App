@@ -32,6 +32,14 @@
 
         <div class="info-section">
           <div class="info-label">
+            <span class="label-icon">🏷️</span>
+            Category
+          </div>
+          <div class="info-value"><%= @calendar.category %></div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">
             <span class="label-icon">📄</span>
             Description
           </div>
@@ -48,8 +56,10 @@
       </div>
 
       <div class="action-buttons">
-        <%= link_to 'Edit Event', edit_calendar_path(@calendar), class: "action-button edit-button" %>
-        <%= link_to 'Delete Event', delete_calendar_path(@calendar), class: "action-button delete-button" %>
+        <% if admin_signed_in? %>
+          <%= link_to 'Edit Event', edit_calendar_path(@calendar), class: "action-button edit-button" %>
+          <%= link_to 'Delete Event', delete_calendar_path(@calendar), class: "action-button delete-button" %>
+        <% end %>
         <%= link_to 'Back to Calendar', home_path, class: "action-button back-button" %>
       </div>
     </div>

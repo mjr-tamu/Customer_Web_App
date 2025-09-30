@@ -102,6 +102,22 @@
         </div>
 
         <div class="form-group">
+          <%= form.label :category, class: "form-label" do %>
+            <span class="label-icon">🏷️</span>
+            Category
+          <% end %>
+          <%= form.select :category, 
+              options_for_select([
+                ['Select a category...', ''],
+                ['Service', 'Service'],
+                ['Bush School', 'Bush School'],
+                ['Social', 'Social']
+              ]), 
+              {}, 
+              { class: "form-select" } %>
+        </div>
+
+        <div class="form-group">
           <%= form.label :description, class: "form-label" do %>
             <span class="label-icon">📄</span>
             Description
@@ -223,7 +239,7 @@ body {
   font-size: 1.2rem;
 }
 
-.form-input, .form-textarea {
+.form-input, .form-textarea, .form-select {
   padding: 15px 20px;
   border: 2px solid #e0e0e0;
   border-radius: 12px;
@@ -232,9 +248,15 @@ body {
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.8);
   color: #3c4043;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-select {
+  cursor: pointer;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
   outline: none;
   border-color: #ff8fab;
   box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.1);

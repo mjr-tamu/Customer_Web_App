@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CalendarsController < ApplicationController
-  before_action :authenticate_admin!
+  before_action :authenticate_admin!, except: [:home, :show]
 
   def home
     # Handle date parameter for navigation
@@ -22,6 +22,12 @@ class CalendarsController < ApplicationController
     # Get all events for the visible calendar period
     @events = Calendar.where(event_date: calendar_start..calendar_end)
     
+    # Apply category filtering
+    @selected_categories = params[:categories] || []
+    if @selected_categories.present? && @selected_categories.any?(&:present?)
+      @events = @events.where(category: @selected_categories)
+    end
+    
     # Build calendar days array
     @calendar_days = []
     current_date = calendar_start
@@ -38,6 +44,9 @@ class CalendarsController < ApplicationController
       
       current_date += 1.day
     end
+    
+    # Available categories for filtering
+    @available_categories = %w[Service Bush\ School Social]
   end
 
   def show
@@ -96,7 +105,7 @@ class CalendarsController < ApplicationController
   private
 
   def calendar_params
-    params.require(:calendar).permit(:title, :event_date, :description, :location)
+    params.require(:calendar).permit(:title, :event_date, :description, :location, :category)
   end
   #----------------------------------------------------------------------------#
 end

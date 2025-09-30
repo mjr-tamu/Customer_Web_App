@@ -5,38 +5,52 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 if Rails.env.development?
-  # DEVELOPMENT ENVIRONMENT - Sample Calendar Events
-  puts 'Seeding development environment with sample calendar events...'
+  # DEVELOPMENT ENVIRONMENT - Sample Calendar Events and Admin
+  puts 'Seeding development environment with sample calendar events and admin...'
+  
+  # Create admin user for development
+  admin = Admin.find_by('LOWER(email) = LOWER(?)', 'Michael.rupprecht@tamu.edu')
+  if admin
+    puts 'Admin user already exists: Michael.rupprecht@tamu.edu'
+  else
+    Admin.create!(email: 'Michael.rupprecht@tamu.edu', full_name: 'Michael Rupprecht', uid: '102717360320592949627', encrypted_password: 'oauth_user')
+    puts 'Admin user created: Michael.rupprecht@tamu.edu'
+  end
 
-  # Create calendar events for development
-  Calendar.find_or_create_by!(title: 'Team Meeting') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 23, 14, 0, 0)
+  # Create calendar events for development (using future dates)
+  Calendar.find_or_create_by!(title: 'Community Service Event') do |calendar|
+    calendar.event_date = DateTime.new(2025, 10, 15, 14, 0, 0)
     calendar.description = 'Weekly team standup meeting to discuss project progress and upcoming deadlines'
     calendar.location = 'Conference Room A'
+    calendar.category = 'Service'
   end
 
-  Calendar.find_or_create_by!(title: 'Project Deadline') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 25, 17, 0, 0)
-    calendar.description = 'Final submission deadline for the customer web app project'
-    calendar.location = 'Online'
+  Calendar.find_or_create_by!(title: 'Bush School Lecture') do |calendar|
+    calendar.event_date = DateTime.new(2025, 10, 20, 17, 0, 0)
+    calendar.description = 'Guest lecture on public policy and governance'
+    calendar.location = 'Bush School Auditorium'
+    calendar.category = 'Bush School'
   end
 
-  Calendar.find_or_create_by!(title: 'Code Review') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 26, 10, 30, 0)
-    calendar.description = 'Review calendar functionality implementation and provide feedback'
-    calendar.location = 'Office - Room 301'
+  Calendar.find_or_create_by!(title: 'Social Mixer') do |calendar|
+    calendar.event_date = DateTime.new(2025, 10, 25, 10, 30, 0)
+    calendar.description = 'Networking event for students and alumni'
+    calendar.location = 'Student Center'
+    calendar.category = 'Social'
   end
 
-  Calendar.find_or_create_by!(title: 'Client Presentation') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 27, 15, 0, 0)
-    calendar.description = 'Present the new calendar application to stakeholders'
-    calendar.location = 'Main Conference Room'
+  Calendar.find_or_create_by!(title: 'Policy Workshop') do |calendar|
+    calendar.event_date = DateTime.new(2025, 11, 5, 15, 0, 0)
+    calendar.description = 'Workshop on policy analysis and implementation'
+    calendar.location = 'Bush School - Room 101'
+    calendar.category = 'Bush School'
   end
 
-  Calendar.find_or_create_by!(title: 'Holiday Break') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 30, 9, 0, 0)
-    calendar.description = 'Company holiday break - office closed'
-    calendar.location = 'Office'
+  Calendar.find_or_create_by!(title: 'Volunteer Cleanup') do |calendar|
+    calendar.event_date = DateTime.new(2025, 11, 10, 9, 0, 0)
+    calendar.description = 'Community park cleanup volunteer event'
+    calendar.location = 'City Park'
+    calendar.category = 'Service'
   end
 
   puts 'Development data created successfully! (5 sample calendar events)'
@@ -45,36 +59,49 @@ elsif Rails.env.test?
   # TEST ENVIRONMENT - Test Calendar Events
   puts 'Seeding test environment with test calendar events...'
 
-  # Create calendar events for test
-  Calendar.find_or_create_by!(title: 'Test Meeting') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 20, 9, 0, 0)
+  # Create calendar events for test (using future dates)
+  Calendar.find_or_create_by!(title: 'Test Service Event') do |calendar|
+    calendar.event_date = DateTime.new(2025, 1, 10, 9, 0, 0)
     calendar.description = 'Test event for automated testing'
     calendar.location = 'Test Room'
+    calendar.category = 'Service'
   end
 
-  Calendar.find_or_create_by!(title: 'Unit Tests') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 21, 14, 0, 0)
-    calendar.description = 'Run unit tests for calendar model'
-    calendar.location = 'Development Environment'
+  Calendar.find_or_create_by!(title: 'Test Bush School Event') do |calendar|
+    calendar.event_date = DateTime.new(2025, 1, 12, 14, 0, 0)
+    calendar.description = 'Test Bush School event'
+    calendar.location = 'Bush School'
+    calendar.category = 'Bush School'
   end
 
   puts 'Test data created successfully! (2 test calendar events)'
 
 else
-  # PRODUCTION ENVIRONMENT - Production Calendar Events
-  puts 'Seeding production environment with production calendar events...'
-
-  # Create calendar events for production
-  Calendar.find_or_create_by!(title: 'Production Deployment') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 28, 20, 0, 0)
-    calendar.description = 'Deploy calendar application to production environment'
-    calendar.location = 'Production Server'
+  # PRODUCTION ENVIRONMENT - Production Calendar Events and Admin
+  puts 'Seeding production environment with production calendar events and admin...'
+  
+  # Create admin user for production
+  admin = Admin.find_by('LOWER(email) = LOWER(?)', 'Michael.rupprecht@tamu.edu')
+  if admin
+    puts 'Admin user already exists: Michael.rupprecht@tamu.edu'
+  else
+    Admin.create!(email: 'Michael.rupprecht@tamu.edu', full_name: 'Michael Rupprecht', uid: '102717360320592949627', encrypted_password: 'oauth_user')
+    puts 'Admin user created: Michael.rupprecht@tamu.edu'
   end
 
-  Calendar.find_or_create_by!(title: 'Monitoring Setup') do |calendar|
-    calendar.event_date = DateTime.new(2024, 12, 29, 11, 0, 0)
-    calendar.description = 'Configure monitoring and logging for production calendar app'
-    calendar.location = 'Server Room'
+  # Create calendar events for production (using future dates)
+  Calendar.find_or_create_by!(title: 'WIPS Service Day') do |calendar|
+    calendar.event_date = DateTime.new(2025, 3, 15, 20, 0, 0)
+    calendar.description = 'Annual community service day event'
+    calendar.location = 'Various Locations'
+    calendar.category = 'Service'
+  end
+
+  Calendar.find_or_create_by!(title: 'Bush School Symposium') do |calendar|
+    calendar.event_date = DateTime.new(2025, 4, 10, 11, 0, 0)
+    calendar.description = 'Annual policy symposium featuring guest speakers'
+    calendar.location = 'Bush School Auditorium'
+    calendar.category = 'Bush School'
   end
 
   puts 'Production data created successfully! (2 production calendar events)'
