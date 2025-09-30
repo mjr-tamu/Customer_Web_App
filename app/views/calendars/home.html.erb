@@ -6,7 +6,7 @@
         <% if admin_signed_in? %>
           <p>Welcome back, <%= current_admin.email %></p>
         <% elsif user_signed_in? %>
-          <p>Welcome, <%= current_user["name"] %></p>
+          <p>Welcome, <%= current_user["name"] %>!</p>
         <% else %>
           <p>Public Event Calendar</p>
         <% end %>
