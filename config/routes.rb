@@ -34,4 +34,7 @@ Rails.application.routes.draw do
   get '/admin_management', to: 'admin_management#index', as: :admin_management
   post '/admin_management/create_admin', to: 'admin_management#create_admin', as: :create_admin
   delete '/admin_management/remove_admin/:id', to: 'admin_management#remove_admin', as: :remove_admin
+
+  # User sign out route
+  delete '/sign_out_user', to: 'calendars#sign_out_user', as: :sign_out_user
 end

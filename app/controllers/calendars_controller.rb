@@ -102,6 +102,12 @@ class CalendarsController < ApplicationController
   #----------------------------------------------------------------------------#
 
   #----------------------------------------------------------------------------#
+  def sign_out_user
+    session.delete(:user_info)
+    flash[:notice] = "You have been signed out successfully."
+    redirect_to home_path
+  end
+
   private
 
   def calendar_params

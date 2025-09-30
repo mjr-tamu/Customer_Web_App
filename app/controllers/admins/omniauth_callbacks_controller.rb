@@ -8,6 +8,12 @@ class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       flash[:success] = "Welcome back, #{admin.full_name}! You're signed in as an admin."
       sign_in_and_redirect admin, event: :authentication
     else
+      # Store non-admin user info in session
+      session[:user_info] = {
+        name: auth.info.name,
+        email: auth.info.email,
+        signed_in: true
+      }
       flash[:notice] = "Welcome #{auth.info.name}! You can view all events. Contact an administrator if you need to create or edit events."
       redirect_to home_path
     end
