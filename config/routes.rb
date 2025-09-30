@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
   devise_for :admins, controllers: { omniauth_callbacks: 'admins/omniauth_callbacks' }
   
+  # Custom OAuth route to handle initiation
+  get '/admins/auth/google_oauth2/init', to: 'admins/omniauth_callbacks#init_oauth', as: :init_google_oauth
+  
   # Dashboard route
   get '/dashboard', to: 'dashboards#show', as: :dashboard
 
