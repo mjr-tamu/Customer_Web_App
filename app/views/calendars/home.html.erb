@@ -13,7 +13,12 @@
       </div>
       <div class="header-right">
         <% if admin_signed_in? %>
-          <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
+          <div class="header-actions">
+            <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
+            <%= link_to admin_management_path, class: "admin-menu-btn", title: "Admin Management" do %>
+              <span class="hamburger-icon">☰</span>
+            <% end %>
+          </div>
         <% else %>
           <%= link_to "Sign In", new_admin_session_path, class: "sign-in-btn" %>
         <% end %>
@@ -157,6 +162,43 @@ body {
 .header-right {
   display: flex;
   align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-menu-btn {
+  color: #5f6368;
+  text-decoration: none;
+  padding: 10px;
+  border: 2px solid #dadce0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: white;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.admin-menu-btn:hover {
+  background: #ffccd5;
+  border-color: #ff8fab;
+  color: #d81b60;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+}
+
+.hamburger-icon {
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
 .sign-out-btn {
@@ -501,6 +543,16 @@ body {
   
   .header-right {
     justify-content: center;
+  }
+  
+  .header-actions {
+    gap: 10px;
+  }
+  
+  .admin-menu-btn {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
   }
 }
 </style>

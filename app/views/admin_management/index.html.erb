@@ -1,0 +1,356 @@
+<div class="admin-management-container">
+  <div class="admin-management-card">
+    <div class="admin-header">
+      <div class="admin-icon">
+        👥
+      </div>
+      <h1 class="admin-title">Admin Management</h1>
+      <p class="admin-subtitle">Manage admin users for WIPS Event Calendar</p>
+    </div>
+
+    <div class="admin-content">
+      <!-- Add New Admin Section -->
+      <div class="add-admin-section">
+        <h2>Add New Admin</h2>
+        <%= form_with url: create_admin_path, method: :post, local: true, class: "admin-form" do |form| %>
+          <div class="form-group">
+            <%= form.label :email, "Admin Email", class: "form-label" do %>
+              <span class="label-icon">📧</span>
+              Email Address
+            <% end %>
+            <%= form.email_field :email, class: "form-input", placeholder: "Enter admin email address...", required: true %>
+          </div>
+          <div class="form-actions">
+            <%= form.submit "Add Admin", class: "submit-button" %>
+            <%= link_to 'Back to Calendar', home_path, class: "cancel-button" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Current Admins Section -->
+      <div class="current-admins-section">
+        <h2>Current Admins</h2>
+        <div class="admins-list">
+          <% @admins.each do |admin| %>
+            <div class="admin-item">
+              <div class="admin-info">
+                <div class="admin-email"><%= admin.email %></div>
+                <div class="admin-name"><%= admin.full_name %></div>
+                <div class="admin-status">
+                  <% if admin == current_admin %>
+                    <span class="current-user">(You)</span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <% unless admin == current_admin %>
+                  <%= link_to remove_admin_path(admin), 
+                      method: :delete, 
+                      class: "remove-button",
+                      data: { 
+                        confirm: "Are you sure you want to remove #{admin.email} as an admin?",
+                        turbo_method: :delete
+                      } do %>
+                    🗑️ Remove
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffccd5 0%, #ff8fab 25%, #ffffff 50%, #ffccd5 75%, #ff8fab 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.admin-management-container {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+}
+
+.admin-management-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.admin-title {
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: #d81b60;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(216, 27, 96, 0.1);
+}
+
+.admin-subtitle {
+  font-size: 1rem;
+  color: #5f6368;
+  margin: 0;
+  font-weight: 400;
+}
+
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.add-admin-section, .current-admins-section {
+  background: rgba(255, 204, 213, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+  border: 1px solid rgba(255, 143, 171, 0.2);
+}
+
+.add-admin-section h2, .current-admins-section h2 {
+  font-size: 1.5rem;
+  color: #d81b60;
+  margin: 0 0 20px 0;
+  font-weight: 500;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #3c4043;
+  margin-bottom: 5px;
+}
+
+.label-icon {
+  font-size: 1.2rem;
+}
+
+.form-input {
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  color: #3c4043;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #ff8fab;
+  box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.1);
+  background: white;
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: #9aa0a6;
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #ff8fab 0%, #ffccd5 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
+  min-width: 150px;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 143, 171, 0.4);
+  background: linear-gradient(135deg, #ff6b92 0%, #ff8fab 100%);
+}
+
+.cancel-button {
+  background: transparent;
+  color: #5f6368;
+  border: 2px solid #dadce0;
+  border-radius: 50px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 150px;
+  text-align: center;
+  display: inline-block;
+}
+
+.cancel-button:hover {
+  background: #f8f9fa;
+  border-color: #5f6368;
+  color: #3c4043;
+  transform: translateY(-1px);
+}
+
+.admins-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.admin-item:hover {
+  border-color: #ff8fab;
+  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.2);
+  transform: translateY(-1px);
+}
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-email {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #3c4043;
+}
+
+.admin-name {
+  font-size: 0.9rem;
+  color: #5f6368;
+}
+
+.admin-status .current-user {
+  font-size: 0.8rem;
+  color: #ff8fab;
+  font-weight: 500;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.remove-button {
+  background: #ffebee;
+  color: #c62828;
+  border: 2px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.remove-button:hover {
+  background: #ffcdd2;
+  border-color: #c62828;
+  color: #b71c1c;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .admin-management-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .admin-title {
+    font-size: 1.8rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .submit-button, .cancel-button {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .admin-item {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .admin-actions {
+    justify-content: center;
+  }
+}
+</style>
