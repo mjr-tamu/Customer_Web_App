@@ -19,35 +19,35 @@ if Rails.env.development?
 
   # Create calendar events for development (using future dates)
   Calendar.find_or_create_by!(title: 'Community Service Event') do |calendar|
-    calendar.event_date = DateTime.new(2025, 10, 15, 14, 0, 0)
+    calendar.event_date = DateTime.new(2025, 12, 15, 14, 0, 0)
     calendar.description = 'Weekly team standup meeting to discuss project progress and upcoming deadlines'
     calendar.location = 'Conference Room A'
     calendar.category = 'Service'
   end
 
   Calendar.find_or_create_by!(title: 'Bush School Lecture') do |calendar|
-    calendar.event_date = DateTime.new(2025, 10, 20, 17, 0, 0)
+    calendar.event_date = DateTime.new(2025, 12, 20, 17, 0, 0)
     calendar.description = 'Guest lecture on public policy and governance'
     calendar.location = 'Bush School Auditorium'
     calendar.category = 'Bush School'
   end
 
   Calendar.find_or_create_by!(title: 'Social Mixer') do |calendar|
-    calendar.event_date = DateTime.new(2025, 10, 25, 10, 30, 0)
+    calendar.event_date = DateTime.new(2025, 12, 25, 10, 30, 0)
     calendar.description = 'Networking event for students and alumni'
     calendar.location = 'Student Center'
     calendar.category = 'Social'
   end
 
   Calendar.find_or_create_by!(title: 'Policy Workshop') do |calendar|
-    calendar.event_date = DateTime.new(2025, 11, 5, 15, 0, 0)
+    calendar.event_date = DateTime.new(2026, 1, 5, 15, 0, 0)
     calendar.description = 'Workshop on policy analysis and implementation'
     calendar.location = 'Bush School - Room 101'
     calendar.category = 'Bush School'
   end
 
   Calendar.find_or_create_by!(title: 'Volunteer Cleanup') do |calendar|
-    calendar.event_date = DateTime.new(2025, 11, 10, 9, 0, 0)
+    calendar.event_date = DateTime.new(2026, 1, 10, 9, 0, 0)
     calendar.description = 'Community park cleanup volunteer event'
     calendar.location = 'City Park'
     calendar.category = 'Service'
