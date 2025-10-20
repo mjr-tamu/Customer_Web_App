@@ -1,8 +1,9 @@
 class AdminManagementController < ApplicationController
-  before_action :authenticate_admin!
+  before_action :authenticate_user!
+  before_action :ensure_admin!
 
   def index
-    @admins = Admin.all.order(:email)
+    @users = User.all.order(:email)
   end
 
   def create_admin
@@ -13,9 +14,17 @@ class AdminManagementController < ApplicationController
       redirect_to admin_management_path and return
     end
 
-    # Check if admin already exists
-    if Admin.exists?(['LOWER(email) = ?', email])
-      flash[:alert] = "Admin with email #{email} already exists."
+    # Check if user already exists
+    user = User.find_by('LOWER(email) = ?', email)
+    
+    if user
+      if user.admin?
+        flash[:alert] = "User with email #{email} is already an admin."
+      else
+        # Convert member to admin
+        user.update!(role: 'admin')
+        flash[:success] = "User #{email} has been promoted to admin successfully."
+      end
       redirect_to admin_management_path and return
     end
 
@@ -25,12 +34,13 @@ class AdminManagementController < ApplicationController
       redirect_to admin_management_path and return
     end
 
-    # Create new admin
+    # Create new admin user
     begin
-      admin = Admin.create!(
+      user = User.create!(
         email: email,
         full_name: email.split('@').first.titleize,
         uid: SecureRandom.hex(10),
+        role: 'admin',
         encrypted_password: 'pending_oauth'
       )
       flash[:success] = "Admin #{email} has been added successfully."
@@ -42,23 +52,23 @@ class AdminManagementController < ApplicationController
   end
 
   def remove_admin
-    admin = Admin.find(params[:id])
+    user = User.find(params[:id])
     
     # Prevent removing the last admin
-    if Admin.count <= 1
+    if User.where(role: 'admin').count <= 1
       flash[:alert] = "Cannot remove the last admin."
       redirect_to admin_management_path and return
     end
 
     # Prevent admin from removing themselves
-    if admin == current_admin
+    if user == current_user
       flash[:alert] = "You cannot remove yourself as an admin."
       redirect_to admin_management_path and return
     end
 
-    email = admin.email
-    admin.destroy
-    flash[:success] = "Admin #{email} has been removed successfully."
+    # Convert admin back to member instead of deleting
+    user.update!(role: 'member')
+    flash[:success] = "User #{user.email} has been demoted to member successfully."
     redirect_to admin_management_path
   end
 end

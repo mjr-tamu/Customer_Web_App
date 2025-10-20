@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Calendar < ApplicationRecord
+  belongs_to :user, optional: true
+
   validates :title, presence: true
   validates :event_date, presence: true
   validates :description, presence: true

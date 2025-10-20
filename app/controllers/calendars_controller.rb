@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class CalendarsController < ApplicationController
-  before_action :authenticate_admin!, except: [:home, :show]
+  before_action :authenticate_user!, except: [:home, :show]
+  before_action :ensure_admin!, only: [:new, :create, :edit, :update, :delete, :destroy]
 
   def home
     # Handle date parameter for navigation
@@ -60,6 +61,7 @@ class CalendarsController < ApplicationController
 
   def create
     @calendar = Calendar.new(calendar_params)
+    @calendar.user = current_user
     
     if @calendar.save
       flash[:notice] = 'Calendar Event Added!'
@@ -103,12 +105,19 @@ class CalendarsController < ApplicationController
 
   #----------------------------------------------------------------------------#
   def sign_out_user
-    session.delete(:user_info)
+    sign_out(current_user)
     flash[:notice] = "You have been signed out successfully."
-    redirect_to new_admin_session_path
+    redirect_to new_user_session_path
   end
 
   private
+
+  def ensure_admin!
+    unless current_user&.admin?
+      flash[:alert] = "You must be an admin to perform this action."
+      redirect_to home_path
+    end
+  end
 
   def calendar_params
     params.require(:calendar).permit(:title, :event_date, :description, :location, :category)

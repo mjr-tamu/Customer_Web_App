@@ -1,5 +1,7 @@
-class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-
+class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+    # The passthru method is required by Devise for OAuth initiation
+    # We inherit it from the parent controller, but we need to make sure it's available
+    
     def google_oauth2
       user = User.from_google(**from_google_params)
   
@@ -41,11 +43,5 @@ class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     def auth
       @auth ||= request.env['omniauth.auth']
     end
-
-    def init_oauth
-      # This method can be used for OAuth initiation if needed
-      redirect_to user_google_oauth2_omniauth_authorize_path
-    end
-
   
   end

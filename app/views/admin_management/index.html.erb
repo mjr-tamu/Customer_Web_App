@@ -14,14 +14,14 @@
         <h2>Add New Admin</h2>
         <%= form_with url: create_admin_path, method: :post, local: true, class: "admin-form" do |form| %>
           <div class="form-group">
-            <%= form.label :email, "Admin Email", class: "form-label" do %>
+            <%= form.label :email, "User Email", class: "form-label" do %>
               <span class="label-icon">📧</span>
               Email Address
             <% end %>
-            <%= form.email_field :email, class: "form-input", placeholder: "Enter admin email address...", required: true %>
+            <%= form.email_field :email, class: "form-input", placeholder: "Enter user email address...", required: true %>
           </div>
           <div class="form-actions">
-            <%= form.submit "Add Admin", class: "submit-button" %>
+            <%= form.submit "Promote to Admin", class: "submit-button" %>
             <%= link_to 'Back to Calendar', home_path, class: "cancel-button" %>
           </div>
         <% end %>
@@ -29,24 +29,31 @@
 
       <!-- Current Admins Section -->
       <div class="current-admins-section">
-        <h2>Current Admins</h2>
+        <h2>Current Users</h2>
         <div class="admins-list">
-          <% @admins.each do |admin| %>
+          <% @users.each do |user| %>
             <div class="admin-item">
               <div class="admin-info">
-                <div class="admin-email"><%= admin.email %></div>
-                <div class="admin-name"><%= admin.full_name %></div>
+                <div class="admin-email"><%= user.email %></div>
+                <div class="admin-name"><%= user.full_name %> (<%= user.role.capitalize %>)</div>
                 <div class="admin-status">
-                  <% if admin == current_admin %>
+                  <% if user == current_user %>
                     <span class="current-user">(You)</span>
                   <% end %>
                 </div>
               </div>
               <div class="admin-actions">
-                <% unless admin == current_admin %>
-                  <%= form_with url: remove_admin_path(admin), method: :delete, local: true, class: "remove-form" do |form| %>
-                    <%= form.submit "🗑️ Remove", class: "remove-button", 
-                        data: { confirm: "Are you sure you want to remove #{admin.email} as an admin?" } %>
+                <% unless user == current_user %>
+                  <% if user.admin? %>
+                    <%= form_with url: remove_admin_path(user), method: :delete, local: true, class: "remove-form" do |form| %>
+                      <%= form.submit "🗑️ Demote to Member", class: "remove-button", 
+                          data: { confirm: "Are you sure you want to demote #{user.email} to member?" } %>
+                    <% end %>
+                  <% else %>
+                    <%= form_with url: create_admin_path, method: :post, local: true, class: "remove-form" do |form| %>
+                      <%= form.hidden_field :email, value: user.email %>
+                      <%= form.submit "⬆️ Promote to Admin", class: "promote-button" %>
+                    <% end %>
                   <% end %>
                 <% end %>
               </div>
@@ -322,6 +329,27 @@ body {
   background: #ffcdd2;
   border-color: #c62828;
   color: #b71c1c;
+  transform: translateY(-1px);
+}
+
+.promote-button {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border: 2px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin: 0;
+}
+
+.promote-button:hover {
+  background: #c8e6c9;
+  border-color: #2e7d32;
+  color: #1b5e20;
   transform: translateY(-1px);
 }
 

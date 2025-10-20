@@ -3,29 +3,24 @@
     <div class="header-content">
       <div class="header-left">
         <h1>WIPS Event Calendar</h1>
-        <% if admin_signed_in? %>
-          <p>Welcome back, <%= current_admin.email %></p>
-        <% elsif user_signed_in? %>
-          <p>Welcome, <%= current_user["name"] %>!</p>
+        <% if user_signed_in? %>
+          <p>Welcome, <%= current_user.full_name %>! (<%= current_user.role.capitalize %>)</p>
         <% else %>
           <p>Public Event Calendar</p>
         <% end %>
       </div>
       <div class="header-right">
-        <% if admin_signed_in? %>
+        <% if user_signed_in? %>
           <div class="header-actions">
-            <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
-            <%= link_to admin_management_path, class: "admin-menu-btn", title: "Admin Management" do %>
-              <span class="hamburger-icon">☰</span>
+            <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "sign-out-btn" %>
+            <% if current_user.admin? %>
+              <%= link_to admin_management_path, class: "admin-menu-btn", title: "Admin Management" do %>
+                <span class="hamburger-icon">☰</span>
+              <% end %>
             <% end %>
           </div>
-        <% elsif user_signed_in? %>
-          <div class="header-actions">
-            <%= button_to "Sign Out", sign_out_user_path, method: :delete, class: "sign-out-btn", 
-                data: { confirm: "Are you sure you want to sign out?" } %>
-          </div>
         <% else %>
-          <%= button_to "Sign In", admin_google_oauth2_omniauth_authorize_path, method: :post, class: "sign-in-btn", data: {turbo: "false"} %>
+          <%= button_to "Sign In", user_google_oauth2_omniauth_authorize_path, method: :post, class: "sign-in-btn", data: {turbo: "false"} %>
         <% end %>
       </div>
     </div>
@@ -65,7 +60,7 @@
     </div>
     <div class="nav-right">
       <%= link_to "Today", home_path, class: "today-btn" %>
-      <% if admin_signed_in? %>
+      <% if user_signed_in? && current_user.admin? %>
         <%= link_to "Create", new_calendar_path, class: "create-btn" %>
       <% end %>
     </div>
