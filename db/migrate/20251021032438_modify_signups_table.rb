@@ -1,11 +1,12 @@
 class ModifySignupsTable < ActiveRecord::Migration[8.0]
   def change
-    # Remove old columns
-    remove_column :signups, :name, :string
-    remove_column :signups, :email, :string
-    
-    # Add new admin_id column
-    add_reference :signups, :admin, null: false, foreign_key: true
+    drop_table :signups, if_exists: true
+
+    create_table :signups do |t|
+      t.references :calendar, null: false, foreign_key: true
+      t.references :admin, null: false, foreign_key: true
+      t.timestamps
+    end
     
     # Add unique constraint to prevent duplicate signups
     add_index :signups, [:admin_id, :calendar_id], unique: true
