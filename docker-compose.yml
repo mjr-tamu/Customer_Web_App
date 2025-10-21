@@ -33,7 +33,7 @@ services:
     command: >
       sh -c "
         rm -f tmp/pids/server.pid &&
-        ./bin/rails db:prepare &&
+        ./bin/rails db:prepare && bundle exec rails db:seed &&
         ./bin/thrust ./bin/rails server -b 0.0.0.0 -p 3000
       "
 

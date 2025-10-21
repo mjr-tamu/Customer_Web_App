@@ -1,108 +1,177 @@
 <div class="home-container">
-  <div class="calendar-header">
-    <div class="header-content">
-      <div class="header-left">
-        <h1>WIPS Event Calendar</h1>
-        <% if admin_signed_in? %>
-          <p>Welcome back, <%= current_admin.email %></p>
-        <% elsif user_signed_in? %>
-          <p>Welcome, <%= current_user["name"] %>!</p>
-        <% else %>
-          <p>Public Event Calendar</p>
-        <% end %>
-      </div>
-      <div class="header-right">
-        <% if admin_signed_in? %>
+  <div class="content-wrapper">
+    <div class="calendar-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1>WIPS Event Calendar</h1>
+          <% if user_signed_in? %>
+            <p>Welcome, <%= current_user.full_name %>!
+              <% if admin_user? %>
+                (Admin)
+              <% else %>
+                (Member)
+              <% end %>
+            </p>
+          <% else %>
+            <p>Public Event Calendar</p>
+          <% end %>
+        </div>
+        <div class="header-right">
           <div class="header-actions">
-            <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
-            <%= link_to admin_management_path, class: "admin-menu-btn", title: "Admin Management" do %>
-              <span class="hamburger-icon">☰</span>
+            <%= link_to "About", about_path, class: "about-btn" %>
+            <% if user_signed_in? %>
+              <%= link_to "Sign Out", destroy_admin_session_path, method: :delete, class: "sign-out-btn" %>
+              <% if admin_user? %>
+                <%= link_to admin_management_path, class: "admin-menu-btn", title: "Admin Management" do %>
+                  <span class="hamburger-icon">☰</span>
+                <% end %>
+              <% end %>
+            <% else %>
+              <%= button_to "Sign In", admin_google_oauth2_omniauth_authorize_path, method: :post, class: "sign-in-btn", data: { turbo: "false" } %>
             <% end %>
           </div>
-        <% elsif user_signed_in? %>
-          <div class="header-actions">
-            <%= button_to "Sign Out", sign_out_user_path, method: :delete, class: "sign-out-btn", 
-                data: { confirm: "Are you sure you want to sign out?" } %>
-          </div>
-        <% else %>
-          <%= button_to "Sign In", admin_google_oauth2_omniauth_authorize_path, method: :post, class: "sign-in-btn", data: {turbo: "false"} %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Filter Section -->
+    <div class="category-filter">
+      <div class="filter-buttons">
+        <%= link_to "All", home_path(date: params[:date]),
+            class: "filter-btn #{'active' if @selected_categories.empty?}" %>
+        <% @available_categories.each do |category| %>
+          <% new_categories =
+               if @selected_categories.include?(category)
+                 @selected_categories - [category]
+               else
+                 @selected_categories + [category]
+               end %>
+          <%= link_to category, home_path(categories: new_categories, date: params[:date]),
+              class: "filter-btn #{'active' if @selected_categories.include?(category)}" %>
         <% end %>
       </div>
-    </div>
-  </div>
-
-  <!-- Category Filter Section -->
-  <div class="category-filter">
-    <div class="filter-buttons">
-      <%= link_to "All", home_path(date: params[:date]), 
-          class: "filter-btn #{'active' if @selected_categories.empty?}" %>
-      <% @available_categories.each do |category| %>
-        <% 
-          # Toggle category in selection
-          if @selected_categories.include?(category)
-            new_categories = @selected_categories - [category]
-          else
-            new_categories = @selected_categories + [category]
-          end
-        %>
-        <%= link_to category, home_path(categories: new_categories, date: params[:date]), 
-            class: "filter-btn #{'active' if @selected_categories.include?(category)}" %>
+      <% if @selected_categories.any? %>
+        <div class="active-filters">
+          <small>Active filters: <%= @selected_categories.join(', ') %></small>
+        </div>
       <% end %>
     </div>
-    <% if @selected_categories.any? %>
-      <div class="active-filters">
-        <small>Active filters: <%= @selected_categories.join(', ') %></small>
-      </div>
-    <% end %>
-  </div>
 
-  <div class="calendar-container">
-  <div class="calendar-nav">
-    <div class="nav-left">
-      <%= link_to "←", home_path(date: (@current_date - 1.month).strftime("%Y-%m")), class: "nav-btn prev" %>
-      <%= link_to "→", home_path(date: (@current_date + 1.month).strftime("%Y-%m")), class: "nav-btn next" %>
-      <h2><%= @current_date.strftime("%B %Y") %></h2>
-    </div>
-    <div class="nav-right">
-      <%= link_to "Today", home_path, class: "today-btn" %>
-      <% if admin_signed_in? %>
-        <%= link_to "Create", new_calendar_path, class: "create-btn" %>
-      <% end %>
-    </div>
-  </div>
+    <!-- MAIN ROW: sidebar + calendar -->
+    <div class="main-content-wrapper">
+      <div class="main-content">
+        <% if user_signed_in? %>
+          <!-- Dashboard Sidebar -->
+          <div class="dashboard-sidebar">
+            <div class="dashboard-header">
+              <h3>My Events</h3>
+            </div>
 
-  <div class="calendar-grid">
-    <div class="calendar-header-row">
-      <div class="day-header">Sun</div>
-      <div class="day-header">Mon</div>
-      <div class="day-header">Tue</div>
-      <div class="day-header">Wed</div>
-      <div class="day-header">Thu</div>
-      <div class="day-header">Fri</div>
-      <div class="day-header">Sat</div>
-    </div>
-    
-    <% @calendar_days.each_slice(7) do |week| %>
-      <div class="calendar-week">
-        <% week.each do |day| %>
-          <div class="calendar-day <%= 'other-month' if day[:other_month] %> <%= 'today' if day[:today] %>">
-            <div class="day-number"><%= day[:date].day %></div>
-            <div class="events">
-              <% day[:events].each do |event| %>
-                <div class="event-item" title="<%= event.title %> - <%= event.event_date.strftime('%I:%M %p') %> - <%= event.category %>">
-                  <%= link_to truncate(event.title, length: 15), show_calendar_path(event), class: "event-link" %>
-                  <div class="event-category"><%= event.category %></div>
+            <!-- Upcoming Events Section -->
+            <div class="dashboard-section">
+              <h4 class="section-title">📅 Upcoming Events</h4>
+              <% if @upcoming_events.any? %>
+                <div class="event-list">
+                  <% @upcoming_events.each do |event| %>
+                    <div class="dashboard-event-item upcoming">
+                      <div class="event-date">
+                        <%= event.event_date.strftime("%b %d") %>
+                      </div>
+                      <div class="event-details">
+                        <%= link_to truncate(event.title, length: 20), show_calendar_path(event), class: "event-title" %>
+                        <div class="event-category"><%= event.category %></div>
+                      </div>
+                    </div>
+                  <% end %>
                 </div>
+              <% else %>
+                <p class="no-events">No upcoming events</p>
+              <% end %>
+            </div>
+
+            <!-- Past Events Section -->
+            <div class="dashboard-section">
+              <h4 class="section-title">✅ Past Events</h4>
+              <% if @past_events.any? %>
+                <div class="event-list">
+                  <% @past_events.each do |event| %>
+                    <div class="dashboard-event-item past">
+                      <div class="event-date">
+                        <%= event.event_date.strftime("%b %d") %>
+                      </div>
+                      <div class="event-details">
+                        <%= link_to truncate(event.title, length: 20), show_calendar_path(event), class: "event-title" %>
+                        <div class="event-category"><%= event.category %></div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="no-events">No past events</p>
               <% end %>
             </div>
           </div>
         <% end %>
-      </div>
-    <% end %>
+
+        <!-- Calendar column -->
+        <div class="calendar-container">
+          <div class="calendar-nav">
+            <div class="nav-left">
+              <%= link_to "←", home_path(date: (@current_date - 1.month).strftime("%Y-%m")), class: "nav-btn prev" %>
+              <%= link_to "→", home_path(date: (@current_date + 1.month).strftime("%Y-%m")), class: "nav-btn next" %>
+              <h2><%= @current_date.strftime("%B %Y") %></h2>
+            </div>
+            <div class="nav-right">
+              <%= link_to "Today", home_path, class: "today-btn" %>
+              <% if admin_user? %>
+                <%= link_to "Create", new_calendar_path, class: "create-btn" %>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="calendar-header-row">
+              <div class="day-header">Sun</div>
+              <div class="day-header">Mon</div>
+              <div class="day-header">Tue</div>
+              <div class="day-header">Wed</div>
+              <div class="day-header">Thu</div>
+              <div class="day-header">Fri</div>
+              <div class="day-header">Sat</div>
+            </div>
+
+            <% @calendar_days.each_slice(7) do |week| %>
+              <div class="calendar-week">
+                <% week.each do |day| %>
+                  <div class="calendar-day <%= 'other-month' if day[:other_month] %> <%= 'today' if day[:today] %>">
+                    <div class="day-number"><%= day[:date].day %></div>
+                    <div class="events">
+                      <% day[:events].each do |event| %>
+                        <div
+                          class="event-item <%= 'signed-up' if user_signed_in? && current_user.signed_up_events.include?(event) %>"
+                          title="<%= event.title %> - <%= event.event_date.strftime('%I:%M %p') %> - <%= event.category %>">
+                          <%= link_to truncate(event.title, length: 15), show_calendar_path(event), class: "event-link" %>
+                          <div class="event-category"><%= event.category %></div>
+                          <% if user_signed_in? && current_user.signed_up_events.include?(event) %>
+                            <div class="signup-indicator">✓</div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div> <!-- /calendar-container -->
+      </div>   <!-- /main-content -->
+    </div>     <!-- /main-content-wrapper -->
   </div>
 </div>
 
 <style>
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
   font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
   background: linear-gradient(135deg, #ffccd5 0%, #ff8fab 25%, #ffffff 50%, #ffccd5 75%, #ff8fab 100%);
@@ -131,433 +200,275 @@ body {
   align-items: center;
 }
 
+.content-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-content-wrapper { width: 100%; }
+
+.main-content {
+  display: flex;
+  gap: 20px;
+  align-items: stretch; /* ensure columns align to full height */
+  width: 100%;
+}
+
+.dashboard-sidebar {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ffccd5;
+}
+
+.dashboard-header h3 {
+  margin: 0;
+  color: #d81b60;
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.dashboard-section { margin-bottom: 25px; }
+
+.section-title {
+  font-size: 1rem;
+  color: #5f6368;
+  margin: 0 0 15px 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-list { display: flex; flex-direction: column; gap: 8px; }
+
+.dashboard-event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.dashboard-event-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dashboard-event-item.upcoming {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.2);
+}
+
+.dashboard-event-item.past {
+  background: rgba(158, 158, 158, 0.1);
+  border-color: rgba(158, 158, 158, 0.2);
+}
+
+.event-date {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5f6368;
+  min-width: 45px;
+  text-align: center;
+  background: rgba(255,255,255,0.8);
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.event-details { flex: 1; min-width: 0; }
+
+.event-title {
+  color: #d81b60;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.event-title:hover { color: #ad1457; text-decoration: underline; }
+
+.dashboard-event-item .event-category { font-size: 0.75rem; color: #5f6368; font-weight: 400; }
+
+.no-events {
+  color: #9aa0a6;
+  font-size: 0.9rem;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
 .calendar-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   padding: 20px 30px;
   margin-bottom: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.2);
   width: 100%;
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
+.header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.header-left h1 { margin: 0; font-size: 1.8rem; font-weight: 300; color: #d81b60; text-shadow: 0 2px 4px rgba(216,27,96,0.1); }
+.header-left p { margin: 5px 0 0; font-size: 0.9rem; color: #5f6368; font-weight: 400; }
+.header-right { display: flex; align-items: center; }
+.header-actions { display: flex; align-items: center; gap: 15px; }
 
-.header-left h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 300;
+.about-btn {
+  background: transparent;
   color: #d81b60;
-  text-shadow: 0 2px 4px rgba(216, 27, 96, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  border: 2px solid #d81b60;
+  transition: all 0.3s ease;
 }
-
-.header-left p {
-  margin: 5px 0 0 0;
-  font-size: 0.9rem;
-  color: #5f6368;
-  font-weight: 400;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.about-btn:hover {
+  background: #d81b60; color: white; transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(216,27,96,0.3); text-decoration: none;
 }
 
 .admin-menu-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 10px;
-  border: 2px solid #dadce0;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  background: white;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  color: #5f6368; text-decoration: none; padding: 10px; border: 2px solid #dadce0; border-radius: 50%;
+  font-size: 1.2rem; font-weight: 500; transition: all 0.3s ease; background: white; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-
 .admin-menu-btn:hover {
-  background: #ffccd5;
-  border-color: #ff8fab;
-  color: #d81b60;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+  background: #ffccd5; border-color: #ff8fab; color: #d81b60; transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,143,171,0.2);
 }
+.hamburger-icon { font-size: 1.4rem; font-weight: bold; }
 
-.hamburger-icon {
-  font-size: 1.4rem;
-  font-weight: bold;
+.sign-out-btn, .sign-in-btn {
+  color: #5f6368; text-decoration: none; padding: 10px 20px; border: 2px solid #dadce0; border-radius: 50px;
+  font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease; background: white;
 }
-
-.sign-out-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 10px 20px;
-  border: 2px solid #dadce0;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.sign-out-btn:hover {
-  background: #ffccd5;
-  border-color: #ff8fab;
-  color: #d81b60;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
-}
-
-.sign-in-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 10px 20px;
-  border: 2px solid #dadce0;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.sign-in-btn:hover {
-  background: #ffccd5;
-  border-color: #ff8fab;
-  color: #d81b60;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+.sign-out-btn:hover, .sign-in-btn:hover {
+  background: #ffccd5; border-color: #ff8fab; color: #d81b60; transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,143,171,0.2);
 }
 
 .category-filter {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 15px 25px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 15px 25px; margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.2); width: 100%;
 }
 
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+.filter-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
 .filter-btn {
-  padding: 8px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 20px;
-  background: white;
-  color: #5f6368;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  padding: 8px 16px; border: 2px solid #e0e0e0; border-radius: 20px; background: white;
+  color: #5f6368; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease; cursor: pointer;
 }
+.filter-btn:hover { border-color: #ff8fab; background: #ffccd5; color: #3c4043; transform: translateY(-1px); }
+.filter-btn.active { background: #ff8fab; border-color: #ff8fab; color: white; box-shadow: 0 4px 15px rgba(255,143,171,0.3); }
 
-.filter-btn:hover {
-  border-color: #ff8fab;
-  background: #ffccd5;
-  color: #3c4043;
-  transform: translateY(-1px);
-}
-
-.filter-btn.active {
-  background: #ff8fab;
-  border-color: #ff8fab;
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
-}
-
-.active-filters {
-  text-align: center;
-  margin-top: 10px;
-  color: #5f6368;
-  font-size: 0.8rem;
-}
+.active-filters { text-align: center; margin-top: 10px; color: #5f6368; font-size: 0.8rem; }
 
 .calendar-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
-  max-width: 1000px;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  padding: 30px; border: 1px solid rgba(255,255,255,0.2); flex: 1; min-width: 0;
 }
 
 .calendar-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #dadce0;
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+  padding-bottom: 16px; border-bottom: 1px solid #dadce0;
 }
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
+.nav-left { display: flex; align-items: center; gap: 16px; }
 .nav-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 8px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  background: white;
-  min-width: 40px;
-  text-align: center;
-  display: inline-block;
+  color: #5f6368; text-decoration: none; padding: 8px; border: 1px solid #dadce0; border-radius: 4px;
+  font-size: 18px; font-weight: 500; transition: all 0.2s ease; background: white; min-width: 40px; text-align: center; display: inline-block;
 }
-
-.nav-btn:hover {
-  background: #f8f9fa;
-  border-color: #5f6368;
-}
-
-.nav-left h2 {
-  margin: 0;
-  color: #3c4043;
-  font-size: 22px;
-  font-weight: 400;
-}
-
-.nav-right {
-  display: flex;
-  gap: 8px;
-}
+.nav-btn:hover { background: #f8f9fa; border-color: #5f6368; }
+.nav-left h2 { margin: 0; color: #3c4043; font-size: 22px; font-weight: 400; }
+.nav-right { display: flex; gap: 8px; }
 
 .today-btn, .create-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 8px 16px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  background: white;
+  color: #5f6368; text-decoration: none; padding: 8px 16px; border: 1px solid #dadce0; border-radius: 4px; font-size: 14px; font-weight: 500;
+  transition: all 0.2s ease; background: white;
 }
+.today-btn:hover, .create-btn:hover { background: #f8f9fa; border-color: #5f6368; }
+.create-btn { background: #ffccd5 !important; border-color: #ff8fab !important; color: #d81b60 !important; }
+.create-btn:hover { background: #ff8fab !important; color: white !important; }
 
-.today-btn:hover, .create-btn:hover {
-  background: #f8f9fa;
-  border-color: #5f6368;
-}
-
-.create-btn {
-  background: #ffccd5 !important;
-  border-color: #ff8fab !important;
-  color: #d81b60 !important;
-}
-
-.create-btn:hover {
-  background: #ff8fab !important;
-  color: white !important;
-}
-
-.calendar-grid {
-  width: 100%;
-  border: 1px solid #dadce0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.calendar-header-row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: #f8f9fa;
-  border-bottom: 1px solid #dadce0;
-}
-
+.calendar-grid { width: 100%; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; }
+.calendar-header-row { display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #dadce0; }
 .day-header {
-  padding: 16px 8px;
-  text-align: center;
-  font-weight: 500;
-  color: #5f6368;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  padding: 16px 8px; text-align: center; font-weight: 500; color: #5f6368; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
   border-right: 1px solid #dadce0;
 }
-
-.day-header:last-child {
-  border-right: none;
-}
-
-.calendar-week {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  border-bottom: 1px solid #dadce0;
-}
-
-.calendar-week:last-child {
-  border-bottom: none;
-}
+.day-header:last-child { border-right: none; }
+.calendar-week { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid #dadce0; }
+.calendar-week:last-child { border-bottom: none; }
 
 .calendar-day {
-  min-height: 100px;
-  background: white;
-  border-right: 1px solid #dadce0;
-  padding: 8px;
-  position: relative;
-  transition: background-color 0.2s ease;
+  min-height: 100px; background: white; border-right: 1px solid #dadce0; padding: 8px; position: relative; transition: background-color 0.2s ease;
 }
-
-.calendar-day:last-child {
-  border-right: none;
-}
-
-.calendar-day:hover {
-  background: #f8f9fa;
-}
-
-.calendar-day.other-month {
-  background: #fafafa;
-  color: #9aa0a6;
-}
-
-.calendar-day.today {
-  background: #fff3e0;
-}
-
+.calendar-day:last-child { border-right: none; }
+.calendar-day:hover { background: #f8f9fa; }
+.calendar-day.other-month { background: #fafafa; color: #9aa0a6; }
+.calendar-day.today { background: #fff3e0; }
 .calendar-day.today .day-number {
-  background: #ffccd5;
-  color: #d81b60;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  font-size: 14px;
+  background: #ffccd5; color: #d81b60; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-weight: 500; font-size: 14px;
 }
 
-.day-number {
-  font-weight: 400;
-  margin-bottom: 4px;
-  color: #3c4043;
-  font-size: 14px;
-}
-
-.events {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.day-number { font-weight: 400; margin-bottom: 4px; color: #3c4043; font-size: 14px; }
+.events { display: flex; flex-direction: column; gap: 2px; }
 
 .event-item {
-  background: #ffebee;
-  border-left: 3px solid #ff8fab;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 12px;
-  line-height: 1.3;
+  background: #ffebee; border-left: 3px solid #ff8fab; padding: 2px 6px; border-radius: 3px; font-size: 12px; line-height: 1.3; position: relative;
 }
-
-.event-link {
-  color: #d81b60;
-  text-decoration: none;
-  font-weight: 400;
-}
-
-.event-link:hover {
-  color: #ad1457;
-  text-decoration: underline;
-}
-
-.event-category {
-  font-size: 10px;
-  color: #666;
-  font-weight: 500;
-  margin-top: 1px;
-}
+.event-link { color: #d81b60; text-decoration: none; font-weight: 400; }
+.event-link:hover { color: #ad1457; text-decoration: underline; }
+.event-category { font-size: 10px; color: #666; font-weight: 500; margin-top: 1px; }
+.event-item.signed-up { background: #e8f5e8; border-left-color: #4caf50; }
+.signup-indicator { position: absolute; top: 2px; right: 4px; color: #4caf50; font-weight: bold; font-size: 10px; }
 
 @media (max-width: 768px) {
-  .home-container {
-    padding: 15px;
-  }
-  
-  .calendar-header {
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .calendar-container {
-    padding: 20px;
-  }
-  
-  .calendar-nav {
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-  }
-  
-  .nav-left, .nav-right {
-    justify-content: center;
-  }
-  
-  .calendar-day {
-    min-height: 80px;
-    font-size: 12px;
-  }
-  
-  .day-header {
-    padding: 12px 4px;
-    font-size: 10px;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-  
-  .header-left {
-    text-align: center;
-  }
-  
-  .header-right {
-    justify-content: center;
-  }
-  
-  .header-actions {
-    gap: 10px;
-  }
-  
-  .admin-menu-btn {
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-  }
+  .home-container { padding: 15px; }
+  .main-content { flex-direction: column; gap: 15px; }
+  .dashboard-sidebar { width: 100%; position: static; max-height: none; order: 2; }
+  .calendar-container { order: 1; padding: 20px; }
+  .calendar-header { padding: 20px; margin-bottom: 20px; }
+  .calendar-nav { flex-direction: column; gap: 16px; align-items: stretch; }
+  .nav-left, .nav-right { justify-content: center; }
+  .calendar-day { min-height: 80px; font-size: 12px; }
+  .day-header { padding: 12px 4px; font-size: 10px; }
+  .header-content { flex-direction: column; gap: 12px; align-items: stretch; }
+  .header-left { text-align: center; }
+  .header-right { justify-content: center; }
+  .header-actions { gap: 10px; }
+  .admin-menu-btn { width: 40px; height: 40px; padding: 8px; }
+}
+
+@media (max-width: 480px) {
+  .dashboard-sidebar { padding: 15px; }
+  .dashboard-event-item { padding: 8px; gap: 8px; }
+  .event-date { min-width: 40px; font-size: 0.7rem; }
+  .event-title { font-size: 0.8rem; }
+  .dashboard-event-item .event-category { font-size: 0.7rem; }
 }
 </style>

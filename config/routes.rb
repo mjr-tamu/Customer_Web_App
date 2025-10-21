@@ -30,14 +30,20 @@ Rails.application.routes.draw do
   patch  '/calendars/:id',             to: 'calendars#update',  as: :update_calendar
   delete '/calendars/:id',             to: 'calendars#destroy', as: :destroy_calendar
 
-  # your confirm page
-  get '/calendars/:id/delete_calendar', to: 'calendars#delete', as: :delete_calendar
 
   # Admin management routes
   get '/admin_management', to: 'admin_management#index', as: :admin_management
   post '/admin_management/create_admin', to: 'admin_management#create_admin', as: :create_admin
   delete '/admin_management/remove_admin/:id', to: 'admin_management#remove_admin', as: :remove_admin
 
-  # User sign out route
-  delete '/sign_out_user', to: 'calendars#sign_out_user', as: :sign_out_user
+  # Signup routes
+  post '/calendars/:calendar_id/signup', to: 'signups#create', as: :signup_calendar
+  delete '/calendars/:calendar_id/signup', to: 'signups#destroy', as: :signout_calendar
+
+  # CSV export route
+  get '/calendars/:id/export', to: 'calendars#export', as: :export_calendar
+
+  # About page
+  get '/about', to: 'calendars#about', as: :about
+
 end

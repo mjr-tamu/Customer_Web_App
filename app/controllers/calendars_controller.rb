@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class CalendarsController < ApplicationController
-  before_action :authenticate_admin!, except: [:home, :show]
+  before_action :authenticate_admin!, except: [:home, :show, :about]
+  before_action :require_admin!, only: [:new, :create, :edit, :update, :delete, :destroy]
 
   def home
     # Handle date parameter for navigation
@@ -47,10 +48,40 @@ class CalendarsController < ApplicationController
     
     # Available categories for filtering
     @available_categories = %w[Service Bush\ School Social]
+    
+    # Dashboard data for signed-in users
+    if user_signed_in?
+      # Past events user attended (events that have already occurred)
+      @past_events = current_user.signed_up_events
+                                 .where('event_date < ?', Time.current)
+                                 .order(event_date: :desc)
+                                 .limit(10)
+      
+      # Future events user is signed up for
+      @upcoming_events = current_user.signed_up_events
+                                     .where('event_date >= ?', Time.current)
+                                     .order(:event_date)
+                                     .limit(10)
+    end
   end
 
   def show
     @calendar = Calendar.find(params[:id])
+  end
+
+  def about
+    # About page - no authentication required
+  end
+
+  def export
+    @calendar = Calendar.find(params[:id])
+    require_admin!
+    
+    respond_to do |format|
+      format.csv do
+        send_data generate_csv, filename: "#{@calendar.title.parameterize}_signups_#{Date.current.strftime('%Y%m%d')}.csv"
+      end
+    end
   end
 
   #----------------------------------------------------------------------------#
@@ -89,10 +120,6 @@ class CalendarsController < ApplicationController
   #----------------------------------------------------------------------------#
 
   #----------------------------------------------------------------------------#
-  def delete
-    @calendar = Calendar.find(params[:id])
-  end
-
   def destroy
     @calendar = Calendar.find(params[:id])
     @calendar.destroy
@@ -101,17 +128,39 @@ class CalendarsController < ApplicationController
   end
   #----------------------------------------------------------------------------#
 
-  #----------------------------------------------------------------------------#
-  def sign_out_user
-    session.delete(:user_info)
-    flash[:notice] = "You have been signed out successfully."
-    redirect_to new_admin_session_path
-  end
 
   private
 
   def calendar_params
     params.require(:calendar).permit(:title, :event_date, :description, :location, :category)
+  end
+
+  def generate_csv
+    require 'csv'
+    
+    CSV.generate do |csv|
+      # Event details header
+      csv << ['Event Details']
+      csv << ['Title', @calendar.title]
+      csv << ['Date', @calendar.event_date.strftime('%B %d, %Y at %I:%M %p')]
+      csv << ['Category', @calendar.category]
+      csv << ['Location', @calendar.location]
+      csv << ['Description', @calendar.description]
+      csv << [] # Empty row
+      
+      # Signups header
+      csv << ['Signups']
+      csv << ['Name', 'Email', 'Signed Up At']
+      
+      # Signup data
+      @calendar.signups.includes(:admin).each do |signup|
+        csv << [
+          signup.admin.full_name,
+          signup.admin.email,
+          signup.created_at.strftime('%B %d, %Y at %I:%M %p')
+        ]
+      end
+    end
   end
   #----------------------------------------------------------------------------#
 end

@@ -5,17 +5,16 @@ class Admins::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if admin.present?
       sign_out_all_scopes
-      flash[:success] = "Welcome back, #{admin.full_name}! You're signed in as an admin."
+      if admin.admin?
+        flash[:success] = "Welcome back, #{admin.full_name}! You're signed in as an admin."
+      else
+        flash[:success] = "Welcome #{admin.full_name}! You're signed in as a member."
+      end
       sign_in_and_redirect admin, event: :authentication
     else
-      # Store non-admin user info in session
-      session[:user_info] = {
-        name: auth.info.name,
-        email: auth.info.email,
-        signed_in: true
-      }
-      flash[:notice] = "Welcome #{auth.info.name}! You can view all events. Contact an administrator if you need to create or edit events."
-      redirect_to home_path
+      # This should not happen anymore since we create users automatically
+      flash[:error] = "Authentication failed. Please try again."
+      redirect_to new_admin_session_path
     end
   end
 

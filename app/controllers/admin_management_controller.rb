@@ -1,5 +1,6 @@
 class AdminManagementController < ApplicationController
   before_action :authenticate_admin!
+  before_action :require_admin!
 
   def index
     @admins = Admin.all.order(:email)
@@ -31,7 +32,8 @@ class AdminManagementController < ApplicationController
         email: email,
         full_name: email.split('@').first.titleize,
         uid: SecureRandom.hex(10),
-        encrypted_password: 'pending_oauth'
+        encrypted_password: 'pending_oauth',
+        role: 'admin'
       )
       flash[:success] = "Admin #{email} has been added successfully."
     rescue => e
