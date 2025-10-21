@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require 'csv'
+
 class CalendarsController < ApplicationController
-  before_action :authenticate_admin!, except: [:home, :show]
+  before_action :authenticate_admin!, except: [:home, :show, :about, :signup, :cancel_signup, :sign_out_user]
+  before_action :authenticate_admin!, only: [:export_attendees]
 
   def home
     # Handle date parameter for navigation
@@ -47,10 +50,19 @@ class CalendarsController < ApplicationController
     
     # Available categories for filtering
     @available_categories = %w[Service Bush\ School Social]
+    
+    # Load user signups for dashboard (if user is signed in)
+    if user_signed_in?
+      @user_signups = EventSignup.for_user(current_user["email"]).upcoming.includes(:calendar).order('calendars.event_date ASC')
+    end
   end
 
   def show
     @calendar = Calendar.find(params[:id])
+  end
+
+  def about
+    # About page action - no authentication required
   end
 
   #----------------------------------------------------------------------------#
@@ -105,7 +117,99 @@ class CalendarsController < ApplicationController
   def sign_out_user
     session.delete(:user_info)
     flash[:notice] = "You have been signed out successfully."
-    redirect_to new_admin_session_path
+    redirect_to root_path
+  end
+
+  def signup
+    @calendar = Calendar.find(params[:id])
+    
+    unless user_signed_in?
+      flash[:alert] = "Please sign in to register for events."
+      redirect_to root_path
+      return
+    end
+    
+    # Check if user already signed up
+    if @calendar.user_signed_up?(current_user["email"])
+      flash[:alert] = "You have already signed up for this event."
+      redirect_to show_calendar_path(@calendar)
+      return
+    end
+    
+    # Create signup
+    @signup = @calendar.event_signups.build(
+      user_email: current_user["email"],
+      user_name: current_user["name"],
+      signed_up_at: Time.current
+    )
+    
+    if @signup.save
+      flash[:notice] = "Successfully signed up for #{@calendar.title}!"
+    else
+      flash[:alert] = @signup.errors.full_messages.join(", ")
+    end
+    
+    redirect_to home_path
+  end
+
+  def cancel_signup
+    @calendar = Calendar.find(params[:id])
+    
+    unless user_signed_in?
+      flash[:alert] = "Please sign in to manage your event registrations."
+      redirect_to root_path
+      return
+    end
+    
+    @signup = @calendar.event_signups.find_by(user_email: current_user["email"])
+    
+    if @signup&.destroy
+      flash[:notice] = "Successfully cancelled your signup for #{@calendar.title}."
+    else
+      flash[:alert] = "You are not signed up for this event."
+    end
+    
+    redirect_to home_path
+  end
+
+  def export_attendees
+    @calendar = Calendar.find(params[:id])
+    @attendees = @calendar.event_signups.order(:signed_up_at)
+    
+    respond_to do |format|
+      format.csv do
+        filename = "#{@calendar.title.parameterize}_attendees_#{Date.current.strftime('%Y%m%d')}.csv"
+        
+        csv_data = CSV.generate do |csv|
+          # Event details header
+          csv << ["Event Details"]
+          csv << ["Title", @calendar.title]
+          csv << ["Date", @calendar.event_date.strftime('%B %d, %Y at %I:%M %p')]
+          csv << ["Description", @calendar.description]
+          csv << ["Location", @calendar.location]
+          csv << ["Category", @calendar.category]
+          csv << [] # Empty row
+          
+          # Attendees header
+          csv << ["Attendees (#{@attendees.count} registered)"]
+          csv << ["Name", "Email", "Signed Up At"]
+          
+          # Attendee data
+          @attendees.each do |attendee|
+            csv << [
+              attendee.user_name,
+              attendee.user_email,
+              attendee.signed_up_at.strftime('%B %d, %Y at %I:%M %p')
+            ]
+          end
+        end
+        
+        send_data csv_data, 
+                  filename: filename,
+                  type: 'text/csv',
+                  disposition: 'attachment'
+      end
+    end
   end
 
   private

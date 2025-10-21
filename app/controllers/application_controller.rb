@@ -7,6 +7,15 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  # Override Devise's authentication redirect
+  def after_sign_in_path_for(resource_or_scope)
+    home_path
+  end
+
+  def after_sign_out_path_for(resource_or_scope)
+    root_path
+  end
+
   # Helper method to check if a regular user is signed in
   def user_signed_in?
     session[:user_info]&.dig("signed_in") == true

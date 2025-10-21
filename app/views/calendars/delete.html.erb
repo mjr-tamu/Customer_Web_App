@@ -1,21 +1,274 @@
-<h1>Confirm Deletion</h1>
+<div class="delete-confirmation-container">
+  <div class="delete-card">
+    <div class="delete-header">
+      <h1>Confirm Deletion</h1>
+      <p>Are you sure you want to delete the calendar event?</p>
+    </div>
 
-<p>Are you sure you want to delete the calendar event:</p>
-<table class="styled-table"> <!-- Starting the table with a simple border-->
-  <thead> <!-- This is the table header section-->
-    <tr> <!-- This defines a table row -->
-      <th><strong>Title</strong></th> <!-- This defines a table header cell-->
-      <th><strong>Date</strong></th>
-    </tr>
-  </thead>
+    <div class="event-details">
+      <div class="event-info">
+        <div class="info-row">
+          <span class="label">Title:</span>
+          <span class="value"><%= @calendar.title %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Date:</span>
+          <span class="value"><%= @calendar.event_date.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Description:</span>
+          <span class="value"><%= @calendar.description %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Location:</span>
+          <span class="value"><%= @calendar.location %></span>
+        </div>
+        <div class="info-row">
+          <span class="label">Category:</span>
+          <span class="value"><%= @calendar.category %></span>
+        </div>
+      </div>
+    </div>
 
-  <tbody> <!-- This defines the main content of the table -->
-      <tr> <!-- This defines a table row -->
-        <td><%= @calendar.title %></td> <!-- This defines table data cell -->
-        <td><%= @calendar.event_date.strftime("%m-%d-%Y %I:%M %p") %></td> <!-- This defines table data cell -->
-        <td><%= button_to "Yes, delete", destroy_calendar_path(@calendar), method: :delete, class: "btn-link delete-button" %></td>
-        <td><%= link_to "Cancel", home_path, class: "btn-link" %></td>
-      </tr>
-  </tbody>
-</table>
-<%= link_to "Back to Home", home_path, class: "btn-link primary" %>
+    <div class="action-buttons">
+      <%= button_to "Yes, Delete", destroy_calendar_path(@calendar), method: :delete, 
+          class: "delete-confirm-btn", 
+          data: { confirm: "This action cannot be undone. Are you absolutely sure?" } %>
+      <%= link_to "Cancel", home_path, class: "cancel-btn" %>
+      <%= link_to "Back to Home", home_path, class: "back-btn" %>
+    </div>
+  </div>
+</div>
+
+<style>
+body {
+  font-family: 'Roboto', 'Google Sans', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffccd5 0%, #ff8fab 25%, #ffffff 50%, #ffccd5 75%, #ff8fab 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.delete-confirmation-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.delete-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.delete-header h1 {
+  color: #d32f2f;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0 0 30px 0;
+  font-weight: 500;
+}
+
+.event-details {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 30px 0;
+  border: 1px solid #dee2e6;
+}
+
+.event-info {
+  text-align: left;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: flex-start;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 120px;
+  margin-right: 15px;
+  font-size: 1rem;
+}
+
+.value {
+  color: #212529;
+  font-size: 1rem;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.delete-confirm-btn {
+  background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+}
+
+.delete-confirm-btn:hover {
+  background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.back-btn {
+  background: transparent;
+  color: #5f6368;
+  border: 2px solid #dadce0;
+  border-radius: 25px;
+  padding: 10px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-btn:hover {
+  background: #f8f9fa;
+  border-color: #bdc1c6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Button form styling */
+.button_to {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.delete-confirm-btn .button_to {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.delete-confirm-btn button {
+  background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 30px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  width: 100% !important;
+  font-family: inherit !important;
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3) !important;
+}
+
+.delete-confirm-btn button:hover {
+  background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .delete-confirmation-container {
+    padding: 10px;
+  }
+  
+  .delete-card {
+    padding: 25px;
+  }
+  
+  .delete-header h1 {
+    font-size: 2rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .delete-confirm-btn,
+  .cancel-btn,
+  .back-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+  }
+  
+  .label {
+    min-width: auto;
+    margin-bottom: 5px;
+    font-weight: 700;
+  }
+}
+</style>

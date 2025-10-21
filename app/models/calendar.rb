@@ -1,11 +1,25 @@
 # frozen_string_literal: true
 
 class Calendar < ApplicationRecord
+  has_many :event_signups, dependent: :destroy
+  
   validates :title, presence: true
   validates :event_date, presence: true
   validates :description, presence: true
   validates :category, presence: true, inclusion: { in: %w[Service Bush\ School Social] }
   validate :event_date_must_be_in_future
+
+  def signed_up_users
+    event_signups.includes(:calendar)
+  end
+  
+  def signup_count
+    event_signups.count
+  end
+  
+  def user_signed_up?(user_email)
+    event_signups.exists?(user_email: user_email)
+  end
 
   private
 

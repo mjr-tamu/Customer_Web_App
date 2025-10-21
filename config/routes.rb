@@ -15,7 +15,6 @@ Rails.application.routes.draw do
   get '/dashboard', to: 'dashboards#show', as: :dashboard
 
   devise_scope :admin do
-    get 'admins/sign_in',  to: 'admins/sessions#new',     as: :new_admin_session
     get 'admins/sign_out', to: 'admins/sessions#destroy', as: :destroy_admin_session
   end
 
@@ -40,4 +39,12 @@ Rails.application.routes.draw do
 
   # User sign out route
   delete '/sign_out_user', to: 'calendars#sign_out_user', as: :sign_out_user
+
+  # About page route
+  get '/about', to: 'calendars#about', as: :about
+
+  # Event signup routes
+  post '/calendars/:id/signup', to: 'calendars#signup', as: :signup_calendar
+  delete '/calendars/:id/signup', to: 'calendars#cancel_signup', as: :cancel_signup_calendar
+  get '/calendars/:id/export_attendees', to: 'calendars#export_attendees', as: :export_attendees_calendar, defaults: { format: 'csv' }
 end
