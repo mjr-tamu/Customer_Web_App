@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'csv'
+
 class CalendarsController < ApplicationController
   before_action :authenticate_admin!, except: [:home, :show, :about]
   before_action :require_admin!, only: [:new, :create, :edit, :update, :delete, :destroy]

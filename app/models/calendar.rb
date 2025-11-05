@@ -10,6 +10,18 @@ class Calendar < ApplicationRecord
   validates :category, presence: true, inclusion: { in: %w[Service Bush\ School Social] }
   validate :event_date_must_be_in_future
 
+  def signed_up_users
+    event_signups.includes(:calendar)
+  end
+  
+  def signup_count
+    event_signups.count
+  end
+  
+  def user_signed_up?(user_email)
+    event_signups.exists?(user_email: user_email)
+  end
+
   private
 
   def event_date_must_be_in_future
