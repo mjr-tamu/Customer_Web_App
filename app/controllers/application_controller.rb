@@ -7,30 +7,42 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # Override Devise's authentication redirect
-  def after_sign_in_path_for(resource_or_scope)
-    home_path
+  # Helper method to check if current user is an admin
+  def admin_user?
+    current_admin&.admin?
+  end
+  helper_method :admin_user?
+
+  # Helper method to check if current user is a member
+  def member_user?
+    current_admin&.member?
+  end
+  helper_method :member_user?
+
+  # Helper method to require admin privileges
+  def require_admin!
+    unless admin_user?
+      flash[:alert] = "You must be an admin to access this page."
+      redirect_to home_path
+    end
   end
 
-  def after_sign_out_path_for(resource_or_scope)
-    root_path
-  end
-
-  # Helper method to check if a regular user is signed in
-  def user_signed_in?
-    session[:user_info]&.dig("signed_in") == true
-  end
-  helper_method :user_signed_in?
-
-  # Helper method to get current user info
+  # Helper method to get current user info (now using the admin model)
   def current_user
-    session[:user_info] if user_signed_in?
+    current_admin
   end
   helper_method :current_user
 
-  # Helper method to sign out regular user
-  def sign_out_user
-    session.delete(:user_info)
+  # Helper method to check if user is signed in (now using admin model)
+  def user_signed_in?
+    admin_signed_in?
   end
-  helper_method :sign_out_user
+  helper_method :user_signed_in?
+
+  # Helper method to check if current user is signed up for an event
+  def signed_up_for?(event)
+    return false unless user_signed_in?
+    current_user.signed_up_events.include?(event)
+  end
+  helper_method :signed_up_for?
 end

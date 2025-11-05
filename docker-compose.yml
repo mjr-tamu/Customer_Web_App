@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: book_collection_1_development
+      POSTGRES_USER: mj
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mj -d book_collection_1_development"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://mj:password@db:5432/book_collection_1_development
+      SECRET_KEY_BASE: e3135e56d1801e801be5bf7518f2eaa1acc9a0613f8f32672b9f1d61abfd9e67
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/rails
+    command: >
+      sh -c "
+        rm -f tmp/pids/server.pid &&
+        ./bin/rails db:prepare && bundle exec rails db:seed &&
+        ./bin/thrust ./bin/rails server -b 0.0.0.0 -p 3000
+      "
+
+volumes:
+  postgres_data:

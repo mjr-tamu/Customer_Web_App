@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Calendar < ApplicationRecord
-  has_many :event_signups, dependent: :destroy
-  
+  has_many :signups, dependent: :destroy
+  has_many :signed_up_users, through: :signups, source: :admin
+
   validates :title, presence: true
   validates :event_date, presence: true
   validates :description, presence: true

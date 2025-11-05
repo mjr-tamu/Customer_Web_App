@@ -3,7 +3,7 @@
     <div class="header-content">
       <div class="header-left">
         <h1>About WIPS Event Calendar</h1>
-        <p>Your gateway to Women in Politics Society events</p>
+        <p class="subtitle">Your gateway to Women in Politics Society events</p>
       </div>
       <div class="header-right">
         <%= link_to "← Back to Calendar", home_path, class: "back-btn" %>
@@ -12,36 +12,21 @@
   </div>
 
   <div class="about-content">
-    <div class="content-section">
-      <div class="section-header">
-        <span class="section-icon">👋</span>
-        <h2>Welcome to WIPS</h2>
-      </div>
-      <p>
-        The Women in Politics Society (WIPS) Event Calendar is your comprehensive platform 
-        for staying informed about all upcoming events, meetings, and activities. Whether 
-        you're a member, supporter, or simply interested in learning more about our mission, 
-        this calendar keeps you connected to our community.
-      </p>
+    <!-- Welcome Section -->
+    <div class="about-card">
+      <h2>👋 Welcome to WIPS</h2>
+      <p>The WIPS Event Calendar is your comprehensive platform for staying informed about upcoming events, meetings, and activities. Whether you're a member, supporter, or simply interested in learning more about women in politics, this calendar connects you to our vibrant community.</p>
     </div>
 
-    <div class="content-section">
-      <div class="section-header">
-        <span class="section-icon">🎯</span>
-        <h2>Our Mission</h2>
-      </div>
-      <p>
-        WIPS is dedicated to empowering women in political leadership, fostering 
-        professional development, and creating a supportive network for women 
-        pursuing careers in politics, policy, and public service.
-      </p>
+    <!-- Mission Section -->
+    <div class="about-card">
+      <h2>🎯 Our Mission</h2>
+      <p>WIPS is dedicated to empowering women in political leadership, fostering professional development, and creating a supportive network for women pursuing careers in politics, policy, and public service. We believe in the power of community and collaboration to drive positive change.</p>
     </div>
 
-    <div class="content-section">
-      <div class="section-header">
-        <span class="section-icon">📋</span>
-        <h2>Event Categories</h2>
-      </div>
+    <!-- Event Categories Section -->
+    <div class="about-card">
+      <h2>📄 Event Categories</h2>
       <div class="category-grid">
         <div class="category-card">
           <div class="category-icon">🤝</div>
@@ -61,41 +46,37 @@
       </div>
     </div>
 
-    <div class="content-section">
-      <div class="section-header">
-        <span class="section-icon">📱</span>
-        <h2>How to Use This Calendar</h2>
-      </div>
-      <div class="feature-grid">
-        <div class="feature-item">
-          <span class="feature-icon">← →</span>
-          <span class="feature-text">Browse events by month using the navigation arrows</span>
+    <!-- How to Use Section -->
+    <div class="about-card">
+      <h2>🏠 How to Use This Calendar</h2>
+      <div class="instruction-grid">
+        <div class="instruction-item">
+          <div class="instruction-icon">← →</div>
+          <h4>Browse Events</h4>
+          <p>Browse events by month using the navigation arrows.</p>
         </div>
-        <div class="feature-item">
-          <span class="feature-icon">🏷️</span>
-          <span class="feature-text">Filter events by category to find what interests you most</span>
+        <div class="instruction-item">
+          <div class="instruction-icon">🏷️</div>
+          <h4>Filter Events</h4>
+          <p>Filter events by category to find what interests you most.</p>
         </div>
-        <div class="feature-item">
-          <span class="feature-icon">👆</span>
-          <span class="feature-text">Click on any event to view detailed information</span>
+        <div class="instruction-item">
+          <div class="instruction-icon">👆</div>
+          <h4>View Details</h4>
+          <p>Click on any event to view detailed information.</p>
         </div>
-        <div class="feature-item">
-          <span class="feature-icon">🔐</span>
-          <span class="feature-text">Sign in to create and manage events (admin access required)</span>
+        <div class="instruction-item">
+          <div class="instruction-icon">🔒</div>
+          <h4>Admin Access</h4>
+          <p>Sign in to create and manage events (admin access required).</p>
         </div>
       </div>
     </div>
 
-    <div class="content-section">
-      <div class="section-header">
-        <span class="section-icon">🚀</span>
-        <h2>Get Involved</h2>
-      </div>
-      <p>
-        Ready to join our community? Attend our events, connect with like-minded 
-        individuals, and become part of a movement that's shaping the future of 
-        women in politics.
-      </p>
+    <!-- Get Involved Section -->
+    <div class="about-card">
+      <h2>🚀 Get Involved</h2>
+      <p>Join our community, attend events, and connect with like-minded individuals who share your passion for political engagement. Whether you're just starting your journey in politics or are an experienced professional, WIPS provides the support and resources you need to succeed.</p>
     </div>
   </div>
 </div>
@@ -107,11 +88,8 @@ body {
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   margin: 0;
-  padding: 0;
+  padding: 20px;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @keyframes gradientShift {
@@ -121,12 +99,9 @@ body {
 }
 
 .about-container {
-  width: 100%;
-  max-width: 1200px;
+  max-width: 1000px;
+  margin: 0 auto;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .about-header {
@@ -134,179 +109,159 @@ body {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  padding: 20px 30px;
+  padding: 30px;
   margin-bottom: 30px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .header-left h1 {
-  margin: 0;
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   font-weight: 300;
   color: #d81b60;
+  margin: 0 0 10px 0;
   text-shadow: 0 2px 4px rgba(216, 27, 96, 0.1);
 }
 
-.header-left p {
-  margin: 5px 0 0 0;
-  font-size: 0.9rem;
+.subtitle {
+  font-size: 1.1rem;
   color: #5f6368;
+  margin: 0;
   font-weight: 400;
 }
 
 .back-btn {
-  color: #5f6368;
-  text-decoration: none;
-  padding: 10px 20px;
-  border: 2px solid #dadce0;
+  background: linear-gradient(135deg, #ff8fab 0%, #ffccd5 100%);
+  color: white;
+  padding: 12px 24px;
   border-radius: 50px;
-  font-size: 0.9rem;
+  text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
-  background: white;
+  border: 2px solid #ff8fab;
 }
 
 .back-btn:hover {
-  background: #ffccd5;
-  border-color: #ff8fab;
-  color: #d81b60;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.2);
+  background: linear-gradient(135deg, #ff6b92 0%, #ff8fab 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.3);
+  color: white;
   text-decoration: none;
 }
 
 .about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.about-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   padding: 30px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 100%;
+  transition: all 0.3s ease;
 }
 
-.content-section {
-  margin-bottom: 40px;
+.about-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-.content-section:last-child {
-  margin-bottom: 0;
-}
-
-.section-header {
+.about-card h2 {
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: #d81b60;
+  margin: 0 0 20px 0;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #ffccd5;
+  gap: 10px;
 }
 
-.section-icon {
-  font-size: 1.5rem;
-  margin-right: 15px;
-}
-
-.section-header h2 {
-  color: #d81b60;
-  font-size: 1.5rem;
-  font-weight: 400;
-  margin: 0;
-}
-
-.content-section p {
-  color: #5f6368;
-  font-size: 1rem;
+.about-card p {
+  font-size: 1.1rem;
   line-height: 1.6;
+  color: #3c4043;
   margin: 0;
 }
 
 .category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.category-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 15px;
-  padding: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(216, 27, 96, 0.15);
-  border-color: #ffccd5;
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.category-icon {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-  display: block;
-}
-
-.category-card h3 {
-  color: #d81b60;
-  font-size: 1.2rem;
-  margin: 0 0 15px 0;
-  font-weight: 500;
-}
-
-.category-card p {
-  color: #5f6368;
-  font-size: 0.95rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
 
-.feature-item {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.category-card {
+  background: rgba(255, 204, 213, 0.2);
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  border: 1px solid rgba(255, 143, 171, 0.2);
   transition: all 0.3s ease;
 }
 
-.feature-item:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(216, 27, 96, 0.1);
+.category-card:hover {
+  background: rgba(255, 204, 213, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 143, 171, 0.2);
 }
 
-.feature-icon {
-  font-size: 1.5rem;
-  margin-right: 15px;
+.category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.category-card h3 {
+  font-size: 1.3rem;
+  font-weight: 500;
   color: #d81b60;
-  font-weight: bold;
-  min-width: 30px;
+  margin: 0 0 10px 0;
 }
 
-.feature-text {
+.category-card p {
+  font-size: 1rem;
   color: #5f6368;
+  margin: 0;
+}
+
+.instruction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.instruction-item {
+  text-align: center;
+  padding: 20px;
+}
+
+.instruction-icon {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #d81b60;
+}
+
+.instruction-item h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #d81b60;
+  margin: 0 0 10px 0;
+}
+
+.instruction-item p {
   font-size: 0.95rem;
-  line-height: 1.5;
+  color: #5f6368;
   margin: 0;
 }
 
@@ -315,21 +270,16 @@ body {
     padding: 15px;
   }
   
-  .about-header {
-    padding: 20px;
-  }
-  
   .header-content {
     flex-direction: column;
-    gap: 20px;
     text-align: center;
   }
   
   .header-left h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
   
-  .about-content {
+  .about-card {
     padding: 20px;
   }
   
@@ -337,18 +287,26 @@ body {
     grid-template-columns: 1fr;
   }
   
-  .feature-grid {
+  .instruction-grid {
     grid-template-columns: 1fr;
   }
-  
-  .section-header {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .about-container {
+    padding: 10px;
   }
   
-  .section-icon {
-    margin-right: 0;
+  .about-header {
+    padding: 20px;
+  }
+  
+  .header-left h1 {
+    font-size: 1.8rem;
+  }
+  
+  .about-card {
+    padding: 15px;
   }
 }
 </style>
